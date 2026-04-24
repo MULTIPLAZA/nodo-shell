@@ -1,0 +1,4 @@
+# Redirects para Cloudflare Pages
+# Por ahora todo es estático, no hay rutas dinámicas.
+# Si más adelante necesitamos SPA fallback, sería:
+# /*  /index.html  200

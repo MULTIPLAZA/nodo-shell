@@ -1,0 +1,125 @@
+/* ===========================================================
+   ERP Lite Web — Design Tokens
+   PALETA: Office 2010 Blue (clon fiel del desktop)
+   Azul metálico + plata. Gradientes reales. Cero modernismo plano.
+   =========================================================== */
+
+:root {
+  /* ----- Marca (azul Office 2010) ----- */
+  --ofc-blue-900: #0a4c82;   /* azul oscuro (active) */
+  --ofc-blue-700: #1e6bb0;   /* azul medio */
+  --ofc-blue-500: #4a90d9;   /* azul claro */
+  --ofc-blue-300: #a6c8e8;   /* azul pastel (borde/hover) */
+  --ofc-blue-100: #d6e4f2;   /* azul hielo (tab activo) */
+  --ofc-blue-50:  #edf4fb;   /* casi blanco azulado */
+
+  /* ----- Plata / Silver (Office 2010 skin) ----- */
+  --sil-900: #3b4a5a;   /* texto oscuro, bordes */
+  --sil-700: #6a7890;
+  --sil-500: #a8b4c2;   /* borde fuerte */
+  --sil-400: #c3ccd6;   /* borde */
+  --sil-300: #d6dce3;   /* superficie intermedia */
+  --sil-200: #e2e7ed;   /* chrome base */
+  --sil-150: #eaf0f6;   /* chrome claro */
+  --sil-100: #f1f4f8;   /* superficie light */
+  --sil-50:  #f7f9fb;
+
+  /* ----- Compatibilidad con nombres existentes (no tocar) ----- */
+  --brand:         var(--ofc-blue-700);
+  --brand-hover:   var(--ofc-blue-900);
+  --brand-active:  var(--ofc-blue-900);
+  --brand-light:   var(--ofc-blue-100);
+  --brand-subtle:  var(--ofc-blue-50);
+
+  /* ----- Superficies con gradientes Office 2010 ----- */
+  --bg-app:        #dee4eb;
+  --bg-title:      linear-gradient(180deg, #f0f4f9 0%, #dce3ec 48%, #c9d2dd 52%, #d8dfe8 100%);
+  --bg-qat:        linear-gradient(180deg, #eaeff5 0%, #d4dbe4 100%);
+  --bg-ribbon:     #fdfdfe;                                                   /* cuerpo del ribbon */
+  --bg-ribbon-tabs: linear-gradient(180deg, #cad3de 0%, #b4bfcd 100%);        /* fila de tabs */
+  --bg-workspace:  #808d9e;                                                   /* MDI azul-gris metálico */
+  --bg-status:     linear-gradient(180deg, #5d7ea3 0%, #3a547a 50%, #2e466b 100%);
+  --bg-hover:      linear-gradient(180deg, #fff4c2 0%, #ffe890 100%);         /* hover amarillo Office */
+  --bg-active:     linear-gradient(180deg, #ffc977 0%, #ffa440 100%);         /* pressed naranja Office */
+  --bg-selected:   var(--ofc-blue-100);
+
+  /* ----- Bordes (metálicos Office) ----- */
+  --border:         #aebbcb;
+  --border-strong:  #8a97a8;
+  --border-ribbon:  #7b8da3;
+  --border-hover:   #d4a106;   /* borde ambar en hover Office */
+
+  /* ----- Texto ----- */
+  --text:            #1f2a3a;
+  --text-muted:      #4d5a6d;
+  --text-disabled:   #9aa4b3;
+  --text-on-brand:   #ffffff;
+  --text-link:       #0b5394;
+
+  /* ----- Estado ----- */
+  --success: #2f7d2f;
+  --success-bg: #dff6dd;
+  --warning: #a85c00;
+  --warning-bg: #fff4ce;
+  --danger:  #a40000;
+  --danger-bg: #fde7e9;
+  --info:    var(--ofc-blue-700);
+  --info-bg: var(--ofc-blue-50);
+
+  /* ----- Tipografía ----- */
+  --font-ui: "Segoe UI", Tahoma, "Microsoft Sans Serif", Arial, sans-serif;
+  --font-mono: "Consolas", "Courier New", monospace;
+
+  --fs-xs:   11px;
+  --fs-sm:   12px;
+  --fs-base: 13px;
+  --fs-md:   14px;
+  --fs-lg:   16px;
+  --fs-xl:   18px;
+
+  --lh-tight:  1.2;
+  --lh-normal: 1.4;
+
+  --fw-regular: 400;
+  --fw-semi:    600;
+  --fw-bold:    700;
+
+  /* ----- Espaciados (densos, desktop) ----- */
+  --sp-0: 2px;
+  --sp-1: 4px;
+  --sp-2: 6px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 24px;
+  --sp-7: 32px;
+
+  /* ----- Radii (chicos, estilo Office 2010) ----- */
+  --radius-sm: 2px;
+  --radius:    3px;
+  --radius-md: 4px;
+
+  /* ----- Sombras Office (bien sutiles) ----- */
+  --shadow-sm: 0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 1px rgba(0,0,0,0.08);
+  --shadow-md: 0 2px 6px rgba(0,0,0,0.12);
+  --shadow-lg: 0 4px 14px rgba(0,0,0,0.18);
+
+  /* ----- Medidas del shell ----- */
+  --h-titlebar:      28px;
+  --h-qat:           26px;
+  --h-ribbon-tabs:   24px;
+  --h-ribbon-body:   94px;
+  --h-workspace-tabs:26px;
+  --h-statusbar:     26px;
+
+  /* ----- Transiciones ----- */
+  --t-fast: 80ms ease;
+  --t:      140ms ease;
+
+  /* ----- Z-index ----- */
+  --z-dropdown: 10;
+  --z-sticky:   20;
+  --z-overlay:  100;
+  --z-modal:    200;
+  --z-toast:    300;
+}

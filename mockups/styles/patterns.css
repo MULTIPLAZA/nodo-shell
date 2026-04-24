@@ -1,0 +1,67 @@
+/* ===========================================================
+   Patterns — componentes reusables Office 2010 Blue
+   =========================================================== */
+
+/* Botón estándar Office (con gradiente plateado sutil) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 3px 12px;
+  min-height: 24px;
+  background: linear-gradient(180deg, #fdfdfe 0%, #e6ecf3 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+.btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+.btn:active {
+  background: var(--bg-active);
+  border-color: #c07c00;
+}
+.btn--primary {
+  background: linear-gradient(180deg, var(--ofc-blue-500) 0%, var(--ofc-blue-700) 100%);
+  color: #fff;
+  border-color: var(--ofc-blue-900);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+}
+.btn--primary:hover {
+  background: linear-gradient(180deg, #66a8e8 0%, var(--ofc-blue-700) 100%);
+  border-color: var(--ofc-blue-900);
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semi);
+  border-radius: 2px;
+  background: var(--sil-200);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.badge--success { background: var(--success-bg); color: var(--success); border-color: #9ad29a; }
+.badge--warning { background: var(--warning-bg); color: var(--warning); border-color: #e3c577; }
+.badge--danger  { background: var(--danger-bg);  color: var(--danger);  border-color: #e39090; }
+.badge--info    { background: var(--info-bg);    color: var(--info);    border-color: var(--ofc-blue-300); }
+
+/* Placeholder para módulos aún no implementados */
+.coming-soon {
+  display: grid;
+  place-items: center;
+  min-height: 280px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  border: 1px dashed var(--border-strong);
+  border-radius: 3px;
+  background: var(--sil-50);
+}
+.coming-soon strong { color: var(--text); display: block; margin-bottom: var(--sp-2); }

@@ -1,0 +1,259 @@
+/* ===========================================================
+   Ribbon — Office 2010 Blue (clon fiel)
+   Tabs con gradiente plateado + activo blanco con highlight azul
+   =========================================================== */
+
+/* ---------- Fila de tabs del ribbon ---------- */
+.ribbon-tabs {
+  display: flex;
+  align-items: flex-end;
+  background: var(--bg-ribbon-tabs);
+  border-bottom: 1px solid var(--border-ribbon);
+  padding: 0;
+  gap: 0;
+  position: relative;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset;
+}
+
+/* Botón File (Archivo) azul a la izquierda */
+.ribbon-file {
+  background: linear-gradient(180deg, var(--ofc-blue-500) 0%, var(--ofc-blue-700) 50%, var(--ofc-blue-900) 100%);
+  color: #fff;
+  font-weight: var(--fw-semi);
+  font-size: var(--fs-sm);
+  padding: 0 var(--sp-4);
+  height: var(--h-ribbon-tabs);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  border-right: 1px solid #073360;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+  transition: filter var(--t-fast);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset;
+}
+.ribbon-file:hover { filter: brightness(1.1); }
+.ribbon-file:active { filter: brightness(0.92); }
+.ribbon-file svg { width: 14px; height: 14px; filter: drop-shadow(0 1px 0 rgba(0,0,0,0.35)); }
+
+.ribbon-tabs__list {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  margin-left: var(--sp-3);
+}
+
+.ribbon-tab {
+  height: calc(var(--h-ribbon-tabs) - 1px);
+  padding: 0 var(--sp-4);
+  display: flex; align-items: center;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  color: var(--text);
+  border-top: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  position: relative;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  transition: background var(--t-fast), box-shadow var(--t-fast);
+}
+.ribbon-tab:hover {
+  background: linear-gradient(180deg, #dae6f3 0%, #b7cce3 100%);
+  border-color: var(--ofc-blue-300);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+}
+.ribbon-tab[aria-selected="true"] {
+  background: #fdfdfe;
+  color: var(--ofc-blue-900);
+  height: var(--h-ribbon-tabs);
+  border: 1px solid var(--border-ribbon);
+  border-bottom-color: #fdfdfe;
+  margin-bottom: -1px;
+  z-index: 1;
+  font-weight: var(--fw-semi);
+  text-shadow: none;
+  box-shadow:
+    0 -1px 0 var(--ofc-blue-500) inset,
+    0 -2px 0 rgba(74, 144, 217, 0.35) inset;
+}
+.ribbon-tab__key {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+}
+body.alt-mode .ribbon-tab__key { text-decoration-color: currentColor; }
+
+/* Controles a la derecha del ribbon */
+.ribbon-tabs__controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding-right: var(--sp-2);
+}
+.ribbon-tabs__controls .qat__btn { height: 22px; }
+
+/* ---------- Cuerpo del ribbon (tab activo expandido) ---------- */
+.ribbon-body {
+  background: var(--bg-ribbon);
+  border-bottom: 1px solid var(--border-strong);
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0 0;
+  background-image:
+    linear-gradient(180deg, #ffffff 0%, #f5f8fb 100%);
+}
+.ribbon-body::-webkit-scrollbar { height: 6px; }
+
+.ribbon-panel { display: none; }
+.ribbon-panel[data-active="true"] {
+  display: flex;
+  align-items: stretch;
+  min-width: 100%;
+}
+
+/* Grupo dentro del ribbon */
+.rb-group {
+  display: flex;
+  flex-direction: column;
+  padding: 1px 4px 0;
+  border-right: 1px solid var(--sil-400);
+  min-width: 0;
+  position: relative;
+}
+.rb-group::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 22px; right: 0;
+  width: 1px;
+  background: rgba(255,255,255,0.7);
+}
+.rb-group:last-child { border-right: none; }
+.rb-group:last-child::after { display: none; }
+
+.rb-group__content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 2px 2px 0;
+}
+.rb-group__label {
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  padding: 2px 6px 3px;
+  margin-top: auto;
+  white-space: nowrap;
+  border-top: 1px solid var(--sil-300);
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.02) 100%);
+}
+
+/* Botón grande del ribbon (icono destacado arriba, texto abajo) */
+.rb-btn-lg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  padding: 3px 4px 2px;
+  width: 64px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  color: var(--text);
+  text-align: center;
+  background: transparent;
+}
+.rb-btn-lg:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+}
+.rb-btn-lg:active {
+  background: var(--bg-active);
+  border-color: #c07c00;
+}
+.rb-btn-lg__icon {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  color: var(--ofc-blue-700);
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.6));
+}
+.rb-btn-lg__icon svg { width: 30px; height: 30px; }
+.rb-btn-lg__label {
+  font-size: var(--fs-xs);
+  line-height: 1.15;
+  font-weight: var(--fw-regular);
+  max-width: 64px;
+  word-wrap: break-word;
+  color: var(--text);
+}
+
+/* Columna de botones chicos (icono a la izquierda, texto a la derecha) */
+.rb-btn-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 1px 0;
+  min-width: 0;
+}
+.rb-btn-sm {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 2px var(--sp-2);
+  border-radius: 2px;
+  border: 1px solid transparent;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  white-space: nowrap;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  min-height: 20px;
+  background: transparent;
+}
+.rb-btn-sm:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+.rb-btn-sm:active {
+  background: var(--bg-active);
+  border-color: #c07c00;
+}
+.rb-btn-sm__icon {
+  width: 16px; height: 16px;
+  display: grid; place-items: center;
+  color: var(--ofc-blue-700);
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.6));
+}
+.rb-btn-sm__icon svg { width: 16px; height: 16px; }
+
+/* Botón con dropdown arrow */
+.rb-btn-sm--split,
+.rb-btn-lg--split {
+  position: relative;
+}
+.rb-btn-sm--split::after,
+.rb-btn-lg--split::after {
+  content: "▾";
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: var(--sp-1);
+}
+
+/* Placeholder para tabs aún no implementados */
+.rb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 0 var(--sp-6);
+  font-size: var(--fs-sm);
+  width: 100%;
+}

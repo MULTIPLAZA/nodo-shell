@@ -1,0 +1,31 @@
+{
+  "name": "NODO Shell — ERP Lite",
+  "short_name": "NODO Shell",
+  "description": "Plataforma base para sistemas administrativos (POS, ERP, gestión). Shell estilo Office Ribbon, instalable como app, funciona offline.",
+  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#dee4eb",
+  "theme_color": "#0f6cbd",
+  "lang": "es-PY",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Clientes",
+      "short_name": "Clientes",
+      "description": "Listado de clientes",
+      "url": "./?modulo=clientes",
+      "icons": [{ "src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

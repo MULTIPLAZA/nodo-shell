@@ -1,0 +1,269 @@
+/* ===========================================================
+   Grid densa tipo DevExpress XtraGrid — Office 2010 Blue
+   Patrón reusable para TODOS los listados del ERP.
+   =========================================================== */
+
+/* ---------- Contenedor de módulo tipo listado ---------- */
+.module {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-ribbon);
+}
+
+/* ---------- Toolbar del módulo (botones de acciones) ---------- */
+.module__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 6px;
+  background: linear-gradient(180deg, #eef2f7 0%, #dce3ec 100%);
+  border-bottom: 1px solid var(--border-strong);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+  flex-shrink: 0;
+}
+.module__toolbar-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--sil-400);
+  margin: 0 4px;
+  box-shadow: 1px 0 0 rgba(255,255,255,0.6);
+}
+.module__toolbar-spacer { flex: 1; }
+
+.tb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  height: 24px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.tb-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+.tb-btn:active {
+  background: var(--bg-active);
+  border-color: #c07c00;
+}
+.tb-btn__icon {
+  width: 16px; height: 16px;
+  display: grid; place-items: center;
+  color: var(--ofc-blue-700);
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.6));
+  flex-shrink: 0;
+}
+.tb-btn__icon svg { width: 16px; height: 16px; }
+.tb-btn--primary { font-weight: var(--fw-semi); color: var(--ofc-blue-900); }
+
+.tb-search {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  height: 22px;
+  background: #fff;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+}
+.tb-search input {
+  border: none;
+  outline: none;
+  font-size: var(--fs-sm);
+  width: 220px;
+  background: transparent;
+  color: var(--text);
+}
+.tb-search__icon { color: var(--text-muted); width: 14px; height: 14px; }
+
+/* ---------- Barra de "grupos" (estilo XtraGrid: "Arrastre una columna acá para agrupar") ---------- */
+.grid-groupbar {
+  padding: 5px 10px;
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--text-muted);
+  background: linear-gradient(180deg, #f2f5f9 0%, #e4e9ef 100%);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* ---------- Grid (scroll interno, columnas fijas) ---------- */
+.grid-wrap {
+  flex: 1;
+  overflow: auto;
+  background: #fff;
+  border-top: 1px solid var(--border);
+}
+
+.grid {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--fs-sm);
+  font-family: var(--font-ui);
+}
+
+/* ----- Encabezado de columnas ----- */
+.grid thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: linear-gradient(180deg, #eef3fa 0%, #d6dfed 100%);
+  color: var(--text);
+  font-weight: var(--fw-semi);
+  font-size: var(--fs-sm);
+  padding: 4px 8px;
+  text-align: left;
+  border-right: 1px solid var(--sil-400);
+  border-bottom: 1px solid var(--border-strong);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  white-space: nowrap;
+  user-select: none;
+}
+.grid thead th:hover {
+  background: linear-gradient(180deg, #fbf4d7 0%, #eedea4 100%);
+  cursor: pointer;
+}
+.grid thead th.th-sort-asc::after,
+.grid thead th.th-sort-desc::after {
+  content: "";
+  display: inline-block;
+  width: 0; height: 0;
+  margin-left: 6px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  vertical-align: middle;
+}
+.grid thead th.th-sort-asc::after  { border-bottom: 5px solid var(--ofc-blue-700); }
+.grid thead th.th-sort-desc::after { border-top:    5px solid var(--ofc-blue-700); }
+
+.grid thead .th-filter {
+  background: #fff;
+  padding: 2px 4px;
+  border-right: 1px solid var(--sil-400);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 25px;
+  z-index: 1;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+}
+.grid thead .th-filter input {
+  width: 100%;
+  padding: 1px 4px;
+  border: 1px solid var(--sil-400);
+  border-radius: 2px;
+  font-size: var(--fs-xs);
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  height: 18px;
+}
+.grid thead .th-filter input:focus {
+  border-color: var(--ofc-blue-500);
+  box-shadow: 0 0 0 1px var(--ofc-blue-300);
+}
+
+/* ----- Cuerpo ----- */
+.grid tbody td {
+  padding: 3px 8px;
+  border-right: 1px solid #edeff2;
+  border-bottom: 1px solid #edeff2;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+.grid tbody tr:nth-child(even) td { background: #f6f8fb; }
+.grid tbody tr:hover td { background: #fbf4d7; }
+.grid tbody tr.is-selected td {
+  background: var(--ofc-blue-100);
+  color: var(--ofc-blue-900);
+}
+.grid tbody tr.is-selected:hover td {
+  background: #c3daee;
+}
+
+/* ----- Columnas tipadas ----- */
+.grid .col-num    { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+.grid .col-money  { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+.grid .col-code   { font-family: var(--font-mono); color: var(--text-muted); }
+.grid .col-center { text-align: center; }
+
+/* ----- Fila de totales al pie ----- */
+.grid tfoot td {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, #e8eef6 0%, #d4dde9 100%);
+  font-weight: var(--fw-semi);
+  padding: 4px 8px;
+  border-top: 1px solid var(--border-strong);
+  border-right: 1px solid var(--sil-400);
+  color: var(--ofc-blue-900);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+
+/* ---------- Paginación / status bar del grid ---------- */
+.grid-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 8px;
+  background: linear-gradient(180deg, #eef2f7 0%, #dce3ec 100%);
+  border-top: 1px solid var(--border-strong);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  flex-shrink: 0;
+}
+.grid-status__spacer { flex: 1; }
+.grid-status__btn {
+  width: 22px; height: 20px;
+  display: grid; place-items: center;
+  border: 1px solid var(--sil-400);
+  background: linear-gradient(180deg, #fff 0%, #e9edf3 100%);
+  border-radius: 2px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 10px;
+}
+.grid-status__btn:hover { background: var(--bg-hover); border-color: var(--border-hover); }
+.grid-status__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.grid-status__input {
+  width: 44px;
+  padding: 1px 4px;
+  border: 1px solid var(--sil-400);
+  border-radius: 2px;
+  font-size: var(--fs-xs);
+  height: 18px;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+/* ---------- Badge de estado (Activo / Inactivo / Mora / etc) ---------- */
+.state {
+  display: inline-block;
+  padding: 0 6px;
+  min-width: 58px;
+  text-align: center;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semi);
+  border-radius: 2px;
+  border: 1px solid;
+  line-height: 16px;
+}
+.state--activo    { background: #e6f4d7; color: #2f6f14; border-color: #a9c780; }
+.state--inactivo  { background: #f0f0f0; color: #666;    border-color: #bbb; }
+.state--mora      { background: #fde7e9; color: #a40000; border-color: #e39090; }
+.state--vip       { background: #fef4e2; color: #8a5400; border-color: #e3c577; }
+.state--nuevo     { background: #e0efff; color: #0a4c82; border-color: #a6c8e8; }

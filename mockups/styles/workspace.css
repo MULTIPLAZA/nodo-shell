@@ -1,0 +1,190 @@
+/* ===========================================================
+   Workspace (MDI emulado) — Office 2010 Blue
+   =========================================================== */
+
+.workspace {
+  display: grid;
+  grid-template-rows: var(--h-workspace-tabs) 1fr;
+  background: var(--bg-workspace);
+  overflow: hidden;
+  min-height: 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Cuando no hay tabs abiertos, el workspace es MDI completo */
+.workspace:has(.ws-tabs:empty) {
+  grid-template-rows: 1fr;
+}
+
+/* ---------- Tabs del workspace (módulos abiertos) ---------- */
+.ws-tabs {
+  display: flex;
+  align-items: flex-end;
+  background: var(--bg-workspace);
+  padding: 2px 4px 0;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom: 1px solid #5a6779;
+}
+.ws-tabs:empty { display: none; }
+.ws-tabs::-webkit-scrollbar { height: 4px; }
+
+.ws-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3);
+  height: calc(var(--h-workspace-tabs) - 2px);
+  background: linear-gradient(180deg, #8d9aab 0%, #707d8f 100%);
+  color: #f0f3f7;
+  border: 1px solid #5a6779;
+  border-bottom: none;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  max-width: 220px;
+  transition: background var(--t-fast);
+  position: relative;
+  margin-right: 1px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+}
+.ws-tab:hover { background: linear-gradient(180deg, #9dabbc 0%, #7f8da1 100%); }
+.ws-tab[aria-selected="true"] {
+  background: linear-gradient(180deg, #fdfdfe 0%, #f4f7fb 100%);
+  color: var(--text);
+  height: var(--h-workspace-tabs);
+  font-weight: var(--fw-semi);
+  margin-bottom: -1px;
+  border-color: var(--border-ribbon);
+  border-bottom: 1px solid #fdfdfe;
+  z-index: 1;
+  text-shadow: none;
+  box-shadow: 0 -2px 0 var(--ofc-blue-500) inset;
+}
+.ws-tab__icon {
+  width: 14px; height: 14px;
+  display: grid; place-items: center;
+  color: inherit;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+.ws-tab[aria-selected="true"] .ws-tab__icon { color: var(--ofc-blue-700); opacity: 1; }
+.ws-tab__icon svg { width: 14px; height: 14px; }
+.ws-tab__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ws-tab__dirty {
+  color: var(--warning);
+  font-weight: var(--fw-bold);
+  margin-left: -2px;
+}
+.ws-tab__close {
+  width: 16px; height: 16px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  color: inherit;
+  margin-left: var(--sp-1);
+  font-size: 10px;
+  transition: background var(--t-fast), color var(--t-fast);
+  opacity: 0.75;
+}
+.ws-tab__close:hover {
+  background: #c42c2c;
+  color: #fff;
+  opacity: 1;
+}
+
+/* ---------- Área de contenido ---------- */
+.ws-content {
+  background: #fdfdfe;
+  overflow: auto;
+  padding: 0;
+  position: relative;
+  border: 1px solid #5a6779;
+  border-top: none;
+  margin: 0 4px 4px;
+}
+
+/* Empty state cuando no hay tabs abiertos */
+.ws-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-workspace);
+  color: rgba(255,255,255,0.85);
+  gap: var(--sp-4);
+  user-select: none;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+}
+.ws-empty__icon {
+  width: 96px; height: 96px;
+  display: grid; place-items: center;
+  color: rgba(255,255,255,0.35);
+}
+.ws-empty__icon svg { width: 96px; height: 96px; }
+.ws-empty__title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semi);
+  color: #fff;
+}
+.ws-empty__hint {
+  font-size: var(--fs-sm);
+  max-width: 500px;
+  text-align: center;
+  line-height: 1.6;
+}
+.ws-empty__hint kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #fff;
+  text-shadow: none;
+}
+
+/* Panel de contenido por módulo (uno por tab) */
+.ws-panel {
+  display: none;
+  height: 100%;
+  padding: var(--sp-5);
+}
+.ws-panel[data-active="true"] { display: block; }
+.ws-panel--full { padding: 0; overflow: hidden; }
+.ws-panel--full[data-active="true"] { display: flex; flex-direction: column; }
+
+.ws-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--sp-4);
+}
+.ws-panel__title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semi);
+  color: var(--ofc-blue-900);
+  margin: 0;
+  display: flex; align-items: center; gap: var(--sp-2);
+}
+.ws-panel__title svg { width: 18px; height: 18px; color: var(--ofc-blue-700); }
+
+.ws-panel__placeholder {
+  padding: var(--sp-6);
+  background: var(--sil-50);
+  border: 1px dashed var(--border-strong);
+  border-radius: 3px;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: var(--fs-sm);
+}
+.ws-panel__placeholder strong { color: var(--text); }

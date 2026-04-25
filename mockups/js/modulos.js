@@ -356,12 +356,50 @@ window.MODULOS.biblioteca = function (container) {
 
         <!-- ===== CHARTS ===== -->
         <div class="form__section" style="grid-column:span 2;">
-          <div class="form__section-title">📊 Chart.bar · line · pie/donut</div>
-          <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" data-demo="charts">
-            <div style="height:280px;border:1px solid var(--border);background:#fff;" data-chart="bar"></div>
-            <div style="height:280px;border:1px solid var(--border);background:#fff;" data-chart="line"></div>
-            <div style="height:280px;border:1px solid var(--border);background:#fff;" data-chart="pie"></div>
+          <div class="form__section-title">📊 Chart — bar / line / area / pie (con gradientes, paleta tema-aware)</div>
+          <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px;" data-demo="charts">
+            <div style="height:240px;border:1px solid var(--border);background:#fff;" data-chart="bar"></div>
+            <div style="height:240px;border:1px solid var(--border);background:#fff;" data-chart="line"></div>
+            <div style="height:240px;border:1px solid var(--border);background:#fff;" data-chart="area"></div>
+            <div style="height:240px;border:1px solid var(--border);background:#fff;" data-chart="pie"></div>
           </div>
+        </div>
+
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">📊 Chart avanzados — stackedBar · groupedBar · funnel · heatmap</div>
+          <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px;" data-demo="charts2">
+            <div style="height:260px;border:1px solid var(--border);background:#fff;" data-chart="stackedBar"></div>
+            <div style="height:260px;border:1px solid var(--border);background:#fff;" data-chart="groupedBar"></div>
+            <div style="height:260px;border:1px solid var(--border);background:#fff;" data-chart="funnel"></div>
+            <div style="height:260px;border:1px solid var(--border);background:#fff;" data-chart="heatmap"></div>
+          </div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">⏱ Chart.gauge — medidor radial</div>
+          <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px;" data-demo="gauges">
+            <div style="height:160px;border:1px solid var(--border);background:#fff;" data-chart="gauge1"></div>
+            <div style="height:160px;border:1px solid var(--border);background:#fff;" data-chart="gauge2"></div>
+          </div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">📈 Chart.sparkline — mini gráficos inline</div>
+          <div style="padding:10px;font-size:13px;" data-demo="sparks">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <thead><tr style="background:#eef3fa;border-bottom:1px solid var(--border);">
+                <th style="padding:5px 8px;text-align:left;">Cliente</th>
+                <th style="padding:5px 8px;text-align:right;">Mes actual</th>
+                <th style="padding:5px 8px;text-align:left;">Tendencia 7 días</th>
+              </tr></thead>
+              <tbody data-role="spark-rows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">📊 Chart.dynamic — dashboard interactivo (filtros + KPIs + selector tipo)</div>
+          <div style="padding:10px;height:480px;" data-demo="dynamic"></div>
         </div>
 
         <!-- ===== OVERLAYS ===== -->
@@ -493,13 +531,13 @@ window.MODULOS.biblioteca = function (container) {
   I.switch({   container: c4, label: "Notificar por mail" });
   I.textarea({ container: c4, label: "Observaciones", rows: 3, maxlength: 200, placeholder: "Notas internas..." });
 
-  /* ---------- Charts ---------- */
+  /* ---------- Charts básicos ---------- */
   NC.Chart.bar({
     container: container.querySelector('[data-chart="bar"]'),
     title: "Ventas por método de pago (mes)",
     data: [
       { label: "Efectivo", value: 4520000 },
-      { label: "Transferencia", value: 3180000 },
+      { label: "Transf.",  value: 3180000 },
       { label: "POS",      value: 1850000 },
       { label: "A cuenta", value: 920000 }
     ],
@@ -510,12 +548,19 @@ window.MODULOS.biblioteca = function (container) {
     title: "Ventas diarias últimos 7 días",
     xLabels: ["Vie","Sáb","Dom","Lun","Mar","Mié","Jue"],
     series: [
-      { name: "Ventas", data: [
-        { x: 0, y: 850000 }, { x: 1, y: 1240000 }, { x: 2, y: 380000 },
-        { x: 3, y: 1450000 }, { x: 4, y: 1820000 }, { x: 5, y: 2100000 }, { x: 6, y: 1680000 }
-      ]}
+      { name: "Ventas",   data: [{x:0,y:850000},{x:1,y:1240000},{x:2,y:380000},{x:3,y:1450000},{x:4,y:1820000},{x:5,y:2100000},{x:6,y:1680000}]},
+      { name: "Cobranzas",data: [{x:0,y:320000},{x:1,y:560000}, {x:2,y:0},     {x:3,y:780000}, {x:4,y:920000}, {x:5,y:1100000},{x:6,y:540000}]}
     ],
-    area: true,
+    valueFormatter: I.formatMoney
+  });
+  NC.Chart.area({
+    container: container.querySelector('[data-chart="area"]'),
+    title: "Facturado vs cobrado (mes)",
+    xLabels: ["Sem 1","Sem 2","Sem 3","Sem 4"],
+    series: [
+      { name: "Facturado", data: [{x:0,y:8400000},{x:1,y:9200000},{x:2,y:7600000},{x:3,y:10300000}]},
+      { name: "Cobrado",   data: [{x:0,y:6100000},{x:1,y:7800000},{x:2,y:6900000},{x:3,y:8200000}]}
+    ],
     valueFormatter: I.formatMoney
   });
   NC.Chart.pie({
@@ -529,6 +574,140 @@ window.MODULOS.biblioteca = function (container) {
       { label: "Facturadas", value: 18 },
       { label: "Entregadas", value: 47 }
     ]
+  });
+
+  /* ---------- Charts avanzados ---------- */
+  NC.Chart.stackedBar({
+    container: container.querySelector('[data-chart="stackedBar"]'),
+    title: "Ventas por método/mes (apilado)",
+    xLabels: ["Ene","Feb","Mar","Abr"],
+    series: [
+      { name: "Efectivo",      data: [3200000, 3800000, 3400000, 4520000] },
+      { name: "Transferencia", data: [2100000, 2600000, 2800000, 3180000] },
+      { name: "POS",           data: [1100000, 1300000, 1500000, 1850000] }
+    ],
+    valueFormatter: I.formatMoney
+  });
+  NC.Chart.groupedBar({
+    container: container.querySelector('[data-chart="groupedBar"]'),
+    title: "Compras vs Ventas por trimestre",
+    xLabels: ["Q1","Q2","Q3","Q4"],
+    series: [
+      { name: "Ventas",  data: [10500000, 12300000, 11800000, 14200000] },
+      { name: "Compras", data: [4200000,   5100000,  4800000,  6300000] },
+      { name: "Margen",  data: [6300000,   7200000,  7000000,  7900000] }
+    ],
+    valueFormatter: I.formatMoney
+  });
+  NC.Chart.funnel({
+    container: container.querySelector('[data-chart="funnel"]'),
+    title: "Pipeline comercial",
+    data: [
+      { label: "Leads",        value: 240 },
+      { label: "Calificados",  value: 145 },
+      { label: "Demos",        value: 78 },
+      { label: "Cotizaciones", value: 42 },
+      { label: "Cerrados",     value: 18 }
+    ]
+  });
+  // Heatmap: ventas por día/hora
+  NC.Chart.heatmap({
+    container: container.querySelector('[data-chart="heatmap"]'),
+    title: "Ventas por día y hora (más oscuro = más ventas)",
+    rows: ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"],
+    cols: ["08","10","12","14","16","18","20"],
+    values: [
+      [ 2, 4, 8,12, 9, 6, 1],
+      [ 3, 5, 9,14,11, 7, 2],
+      [ 2, 4, 7,10, 8, 5, 1],
+      [ 4, 6,10,15,12, 8, 3],
+      [ 5, 8,13,18,16,11, 5],
+      [ 8,12,16,20,18,14, 9],
+      [ 1, 2, 4, 6, 5, 3, 0]
+    ]
+  });
+
+  /* ---------- Gauges ---------- */
+  NC.Chart.gauge({
+    container: container.querySelector('[data-chart="gauge1"]'),
+    title: "Meta del mes",
+    value: 72,
+    min: 0, max: 100,
+    label: "% cumplido",
+    valueFormatter: v => Math.round(v) + "%"
+  });
+  NC.Chart.gauge({
+    container: container.querySelector('[data-chart="gauge2"]'),
+    title: "Ocupación de caja",
+    value: 4520000,
+    min: 0, max: 6000000,
+    label: "Saldo actual",
+    valueFormatter: I.formatMoney
+  });
+
+  /* ---------- Sparklines ---------- */
+  const sparkRows = container.querySelector('[data-role="spark-rows"]');
+  const sparkData = [
+    { cli: "Don Nelson",     mes: 4520000, trend: [3,5,4,7,6,8,9] },
+    { cli: "Luis González",  mes: 3180000, trend: [6,4,5,3,5,4,3] },
+    { cli: "Mecánica Asu.",  mes: 1850000, trend: [2,3,3,4,5,6,7] },
+    { cli: "Taller Rápido",  mes:  920000, trend: [5,5,4,3,2,2,1] },
+    { cli: "El Águila",      mes: 2400000, trend: [4,6,5,7,8,7,9] }
+  ];
+  sparkData.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.style.borderBottom = "1px solid #edeff2";
+    tr.innerHTML = `
+      <td style="padding:5px 8px;">${r.cli}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:var(--font-mono);">${I.formatMoney(r.mes)}</td>
+      <td style="padding:5px 8px;" data-spark></td>
+    `;
+    sparkRows.appendChild(tr);
+    NC.Chart.sparkline({ container: tr.querySelector('[data-spark]'), data: r.trend });
+  });
+
+  /* ---------- DYNAMIC dashboard ---------- */
+  // Dataset mock: ventas con fecha, método, vendedor, monto
+  const ventasMock2 = [];
+  const metodos = ["efectivo","transferencia","pos","a-cuenta"];
+  const vendedores = ["Darío","Sofía","Luis"];
+  for (let m = 0; m < 4; m++) {
+    for (let d = 1; d <= 28; d++) {
+      const cant = 1 + Math.floor(Math.random() * 5);
+      for (let v = 0; v < cant; v++) {
+        ventasMock2.push({
+          fecha: `2026-0${m+1}-${String(d).padStart(2,"0")}`,
+          metodo: metodos[Math.floor(Math.random()*metodos.length)],
+          vendedor: vendedores[Math.floor(Math.random()*vendedores.length)],
+          total: Math.floor(50000 + Math.random() * 950000)
+        });
+      }
+    }
+  }
+  NC.Chart.dynamic({
+    container: container.querySelector('[data-demo="dynamic"]'),
+    title: "Ventas — vista interactiva",
+    data: ventasMock2,
+    valueField: "total",
+    group:  { field: "fecha",  by: "month" },
+    series: { field: "metodo" },
+    filters: [
+      { id: "metodo",   label: "Método",    type: "select", field: "metodo",
+        options: [{value:"",label:"Todos"},{value:"efectivo",label:"Efectivo"},{value:"transferencia",label:"Transferencia"},{value:"pos",label:"POS"},{value:"a-cuenta",label:"A cuenta"}] },
+      { id: "vendedor", label: "Vendedor",  type: "select", field: "vendedor",
+        options: [{value:"",label:"Todos"},{value:"Darío",label:"Darío"},{value:"Sofía",label:"Sofía"},{value:"Luis",label:"Luis"}] },
+      { id: "fecha",    label: "Período",   type: "dateRange", field: "fecha",
+        presets: [{id:"month",label:"Mes actual"},{id:"30d",label:"Últ. 30d"},{id:"year",label:"Año"}] }
+    ],
+    metrics: [
+      { id: "total",  label: "Total facturado", agg: "sum", field: "total", formatter: I.formatMoney },
+      { id: "count",  label: "Cantidad ventas", agg: "count" },
+      { id: "avg",    label: "Ticket promedio", agg: "avg", field: "total", formatter: I.formatMoney },
+      { id: "max",    label: "Venta máxima",    agg: "max", field: "total", formatter: I.formatMoney }
+    ],
+    chartTypes: ["bar","stackedBar","groupedBar","line","area","pie"],
+    defaultType: "stackedBar",
+    valueFormatter: I.formatMoney
   });
 
   /* ---------- Modals ---------- */

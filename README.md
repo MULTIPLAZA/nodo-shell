@@ -62,6 +62,11 @@ Pequeña librería de componentes vanilla, tema-aware, listos para usar en cualq
 | **`NodoComponents.Toast`** | `success(msg)` · `warning(msg)` · `danger(msg)` · `info(msg)`. Stack automático arriba a la derecha, auto-dismiss configurable. |
 | **`NodoComponents.DocumentViewer`** | `open({url, type, title})`. Tipos: `pdf` (iframe nativo) · `image` (con zoom 25%–400%) · `iframe` genérico. Botones de descargar e imprimir. |
 | **`NodoComponents.Agenda`** | Calendario estilo Google Calendar. Vista Mes (grilla con chips) + Vista Agenda (lista cronológica). Eventos con título/fecha/hora/nota/color (6)/estado (4). Side panel para editar. Atajos: ↑↓←→ Enter N T M/A PgUp/PgDn. Storage configurable (localStorage por default, override con `loader`/`saver` async). |
+| **`NodoComponents.Wizard`** | Stepper con N pasos, validación por paso, navegación libre a pasos completados. Each step define `render(panel, ctx)` y `validate(ctx)`. Callbacks `onComplete(ctx)` / `onCancel()`. |
+| **`NodoComponents.Kanban`** | Board con columnas configurables y drag&drop HTML5 entre columnas. Cards con título/subtítulo/tag/color. Callbacks `onMove(card, fromCol, toCol)` y `onCardClick(card)`. API: `addCard`, `removeCard`, `moveCard`. |
+| **`NodoComponents.TreeView`** | Árbol jerárquico expandible con icono y badge opcional por nodo. Selección con click. Callbacks `onSelect(node)` y `onExpand(node, isExpanded)`. API: `expandAll`, `collapseAll`, `select`. |
+| **`NodoComponents.FileUpload`** | Dropzone con drag&drop + click. Preview de imágenes inline. Validación de `accept`, `maxSize`, `maxFiles`. API: `getFiles()`, `clear()`. |
+| **`NodoComponents.DataExport`** | Helpers funcionales: `toCSV(rows, columns, filename)` (UTF-8 BOM + `;` Excel-friendly) · `toJSON(data, filename)` · `toPrintablePDF(rows, columns, {title, subtitle})` (abre ventana imprimible, browser ofrece "Guardar como PDF"). Botón con dropdown: `button({container, getRows, columns, formats})`. |
 
 #### Ejemplos rápidos
 
@@ -149,6 +154,8 @@ nodo-shell/
     │   ├── components-inputs.css   inputs (text, money, ruc, date, select, switch...)
     │   ├── components-chart.css    gráficos SVG vanilla
     │   ├── components-overlay.css  modal, toast, document viewer
+    │   ├── components-data.css     wizard, kanban, treeview
+    │   ├── components-files.css    file upload (data export sin css propio)
     │   ├── components-agenda.css   calendario / agenda (vista mes + lista)
     │   ├── themes.css              sistema de temas (Office Blue/Bloomberg/Slate)
     │   └── keyboard.css            focus visible, badges F#, overlay F1
@@ -159,6 +166,8 @@ nodo-shell/
     │   ├── components-inputs.js    NodoComponents.Inputs (paquete completo)
     │   ├── components-chart.js     NodoComponents.Chart (bar / line / pie)
     │   ├── components-overlay.js   NodoComponents.Modal / Toast / DocumentViewer
+    │   ├── components-data.js      NodoComponents.Wizard / Kanban / TreeView
+    │   ├── components-files.js     NodoComponents.FileUpload / DataExport
     │   ├── components-agenda.js    NodoComponents.Agenda
     │   ├── mock-data.js            datos PY de ejemplo
     │   └── modulos.js              registry de módulos (clientes, agenda, biblioteca...)

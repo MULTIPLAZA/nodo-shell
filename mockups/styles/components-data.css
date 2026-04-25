@@ -1,0 +1,332 @@
+/* ===========================================================
+   NODO Shell — Components: Wizard · Kanban · TreeView
+   =========================================================== */
+
+/* ============================================================
+   WIZARD / Stepper
+   ============================================================ */
+.no-wiz {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-ribbon, #fff);
+  font-family: var(--font-ui);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  min-height: 320px;
+}
+.no-wiz__steps {
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(180deg, #eef3fa 0%, #d6dfed 100%);
+  border-bottom: 1px solid var(--border-strong);
+  padding: 0;
+  position: relative;
+  flex-shrink: 0;
+}
+.no-wiz__step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  border-right: 1px solid var(--sil-400);
+  cursor: not-allowed;
+  position: relative;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.no-wiz__step:last-child { border-right: none; }
+.no-wiz__step--clickable { cursor: pointer; }
+.no-wiz__step--clickable:hover { background: var(--bg-hover); color: var(--text); }
+.no-wiz__step--active {
+  background: #fff;
+  color: var(--ofc-blue-900);
+  font-weight: var(--fw-semi);
+  text-shadow: none;
+  box-shadow: 0 -2px 0 var(--ofc-blue-700) inset;
+}
+.no-wiz__step--done {
+  color: var(--success);
+}
+.no-wiz__step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--sil-300);
+  border: 1px solid var(--sil-500);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.no-wiz__step--active .no-wiz__step-num {
+  background: var(--ofc-blue-700);
+  color: #fff;
+  border-color: var(--ofc-blue-900);
+  box-shadow: 0 0 0 3px rgba(30,107,176,0.15);
+}
+.no-wiz__step--done .no-wiz__step-num {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+.no-wiz__step-label { flex: 1; line-height: 1.2; }
+.no-wiz__step-sub  { font-size: 10px; color: var(--text-muted); display: block; }
+
+.no-wiz__body {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+  background: var(--bg-ribbon, #fff);
+  min-height: 0;
+}
+
+.no-wiz__footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, var(--sil-100) 0%, var(--sil-200) 100%);
+  border-top: 1px solid var(--border);
+}
+.no-wiz__footer .no-wiz__progress {
+  flex: 1;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   KANBAN board
+   ============================================================ */
+.no-kan {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-app);
+  font-family: var(--font-ui);
+  min-height: 320px;
+}
+.no-kan__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: linear-gradient(180deg, #eef2f7 0%, #dce3ec 100%);
+  border-bottom: 1px solid var(--border-strong);
+  flex-shrink: 0;
+}
+.no-kan__title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semi);
+  color: var(--ofc-blue-900);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.no-kan__board {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px;
+  min-height: 0;
+}
+.no-kan__col {
+  flex: 0 0 240px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f4f6fa 0%, #e8edf3 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  min-height: 100%;
+  max-height: 100%;
+}
+.no-kan__col-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #fff 0%, #eef3fa 100%);
+  font-weight: var(--fw-semi);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-top: 3px solid var(--ofc-blue-700);
+}
+.no-kan__col-color { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.no-kan__col-count {
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--sil-200);
+  border-radius: 10px;
+  padding: 1px 6px;
+  margin-left: auto;
+  font-weight: var(--fw-semi);
+}
+.no-kan__col-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 60px;
+}
+.no-kan__col-body--drop-target {
+  background: rgba(74,144,217,0.08);
+  outline: 2px dashed var(--ofc-blue-500);
+  outline-offset: -4px;
+}
+.no-kan__card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--ofc-blue-700);
+  border-radius: 3px;
+  padding: 6px 8px;
+  cursor: grab;
+  font-size: var(--fs-sm);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  user-select: none;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.no-kan__card:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.1); transform: translateY(-1px); }
+.no-kan__card.is-dragging { opacity: 0.4; cursor: grabbing; }
+.no-kan__card-title { font-weight: var(--fw-semi); color: var(--text); margin-bottom: 2px; }
+.no-kan__card-sub   { font-size: 11px; color: var(--text-muted); }
+.no-kan__card-meta  {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.no-kan__card-tag {
+  display: inline-block;
+  padding: 0 6px;
+  background: var(--ofc-blue-100);
+  color: var(--ofc-blue-900);
+  border-radius: 2px;
+  font-weight: var(--fw-semi);
+}
+
+/* ============================================================
+   TREE VIEW
+   ============================================================ */
+.no-tree {
+  font-family: var(--font-ui);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 4px 0;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  overflow: auto;
+  min-height: 200px;
+}
+.no-tree ul { list-style: none; margin: 0; padding: 0; }
+.no-tree__node {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px 3px 0;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.no-tree__node:hover { background: var(--bg-hover); }
+.no-tree__node[aria-selected="true"] {
+  background: var(--ofc-blue-100);
+  color: var(--ofc-blue-900);
+  font-weight: var(--fw-semi);
+}
+.no-tree__node[aria-selected="true"]:hover { background: var(--ofc-blue-100); }
+.no-tree__toggle {
+  width: 16px; height: 16px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  transition: transform var(--t-fast);
+}
+.no-tree__node--leaf .no-tree__toggle { visibility: hidden; }
+.no-tree__node--expanded .no-tree__toggle { transform: rotate(90deg); }
+.no-tree__icon {
+  width: 16px; height: 16px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  color: var(--ofc-blue-700);
+}
+.no-tree__icon svg { width: 14px; height: 14px; }
+.no-tree__label { flex: 1; }
+.no-tree__badge {
+  font-size: 10px;
+  padding: 0 6px;
+  background: var(--sil-200);
+  color: var(--text-muted);
+  border-radius: 10px;
+  font-weight: var(--fw-semi);
+  flex-shrink: 0;
+}
+.no-tree__children {
+  border-left: 1px dashed var(--border);
+  margin-left: 11px;
+  padding-left: 0;
+}
+.no-tree__node--collapsed + .no-tree__children { display: none; }
+
+
+/* =============================================================
+   THEME OVERRIDES — Bloomberg
+   ============================================================= */
+[data-theme="bloomberg"] .no-wiz { background: #232323; border-color: #3a3a3a; }
+[data-theme="bloomberg"] .no-wiz__steps {
+  background: linear-gradient(180deg, #353535 0%, #2a2a2a 100%);
+  border-bottom-color: #4a4a4a;
+}
+[data-theme="bloomberg"] .no-wiz__step { color: #888; border-right-color: #3a3a3a; }
+[data-theme="bloomberg"] .no-wiz__step--active {
+  background: #232323;
+  color: #e8c084;
+  box-shadow: 0 -2px 0 #d4a76a inset;
+}
+[data-theme="bloomberg"] .no-wiz__step--done { color: #b8d480; }
+[data-theme="bloomberg"] .no-wiz__step-num { background: #2a2a2a; color: #e8e8e8; border-color: #4a4a4a; }
+[data-theme="bloomberg"] .no-wiz__step--active .no-wiz__step-num { background: #d4a76a; color: #1a1a1a; border-color: #b8761a; }
+[data-theme="bloomberg"] .no-wiz__step--done .no-wiz__step-num { background: #7aa84e; color: #1a1a1a; border-color: #4a6b28; }
+[data-theme="bloomberg"] .no-wiz__body { background: #232323; }
+[data-theme="bloomberg"] .no-wiz__footer { background: linear-gradient(180deg, #2e2e2e 0%, #232323 100%); border-top-color: #4a4a4a; }
+
+[data-theme="bloomberg"] .no-kan { background: #1a1a1a; }
+[data-theme="bloomberg"] .no-kan__toolbar { background: linear-gradient(180deg, #353535 0%, #2a2a2a 100%); border-bottom-color: #4a4a4a; }
+[data-theme="bloomberg"] .no-kan__title { color: #e8c084; }
+[data-theme="bloomberg"] .no-kan__col { background: linear-gradient(180deg, #262626 0%, #1f1f1f 100%); border-color: #3a3a3a; }
+[data-theme="bloomberg"] .no-kan__col-header {
+  background: linear-gradient(180deg, #2e2e2e 0%, #232323 100%);
+  border-top-color: #d4a76a;
+  color: #e8c084;
+  border-bottom-color: #3a3a3a;
+}
+[data-theme="bloomberg"] .no-kan__col-count { background: #1a1a1a; color: #d4a76a; }
+[data-theme="bloomberg"] .no-kan__col-body--drop-target {
+  background: rgba(212,167,106,0.1);
+  outline-color: #d4a76a;
+}
+[data-theme="bloomberg"] .no-kan__card { background: #2e2e2e; border-color: #3a3a3a; border-left-color: #d4a76a; color: #e8e8e8; }
+[data-theme="bloomberg"] .no-kan__card-sub { color: #888; }
+[data-theme="bloomberg"] .no-kan__card-tag { background: #3a2c1c; color: #e8c084; }
+
+[data-theme="bloomberg"] .no-tree { background: #1f1f1f; border-color: #3a3a3a; color: #e8e8e8; }
+[data-theme="bloomberg"] .no-tree__icon { color: #d4a76a; }
+[data-theme="bloomberg"] .no-tree__node:hover { background: linear-gradient(180deg, #4a3a20 0%, #3a2a18 100%); }
+[data-theme="bloomberg"] .no-tree__node[aria-selected="true"] { background: #3a2a18; color: #e8c084; }
+[data-theme="bloomberg"] .no-tree__badge { background: #3a3a3a; color: #d4a76a; }
+[data-theme="bloomberg"] .no-tree__children { border-left-color: #3a3a3a; }
+
+/* ----- Slate ----- */
+[data-theme="slate"] .no-wiz__step--active { box-shadow: 0 -2px 0 #2d6a4f inset; color: #1b4332; }
+[data-theme="slate"] .no-wiz__step--active .no-wiz__step-num { background: #2d6a4f; border-color: #1b4332; }
+[data-theme="slate"] .no-kan__col-header { border-top-color: #2d6a4f; color: #1b4332; }
+[data-theme="slate"] .no-kan__card { border-left-color: #2d6a4f; }

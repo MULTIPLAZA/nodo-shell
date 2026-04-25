@@ -1,0 +1,114 @@
+/* ===========================================================
+   NODO Shell — FileUpload + DataExport (UI mínima)
+   =========================================================== */
+
+/* ============================================================
+   FILE UPLOAD (dropzone + lista de archivos)
+   ============================================================ */
+.no-fu {
+  font-family: var(--font-ui);
+}
+.no-fu__zone {
+  border: 2px dashed var(--sil-500);
+  border-radius: 4px;
+  background: linear-gradient(180deg, #fafbfd 0%, #f1f4f8 100%);
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  color: var(--text);
+}
+.no-fu__zone:hover { background: var(--bg-hover); border-color: var(--border-hover); }
+.no-fu__zone--drag {
+  background: var(--ofc-blue-100);
+  border-color: var(--ofc-blue-700);
+  color: var(--ofc-blue-900);
+}
+.no-fu__zone-icon {
+  width: 36px; height: 36px;
+  margin: 0 auto 6px;
+  color: var(--ofc-blue-700);
+  display: grid;
+  place-items: center;
+}
+.no-fu__zone-icon svg { width: 32px; height: 32px; }
+.no-fu__zone-title { font-size: 13px; font-weight: var(--fw-semi); margin-bottom: 4px; }
+.no-fu__zone-hint  { font-size: 11px; color: var(--text-muted); }
+.no-fu__zone input { display: none; }
+
+.no-fu__list {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.no-fu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-size: var(--fs-sm);
+}
+.no-fu__item-thumb {
+  width: 36px; height: 36px;
+  background: var(--sil-200);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-weight: bold;
+  overflow: hidden;
+}
+.no-fu__item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.no-fu__item-info { flex: 1; min-width: 0; }
+.no-fu__item-name {
+  font-weight: var(--fw-semi);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.no-fu__item-size {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.no-fu__item-remove {
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.no-fu__item-remove:hover { background: var(--danger-bg); color: var(--danger); border-color: var(--danger); }
+.no-fu__item--invalid { border-color: var(--danger); background: var(--danger-bg); }
+.no-fu__item--invalid .no-fu__item-name { color: var(--danger); }
+
+.no-fu__error { font-size: 11px; color: var(--danger); margin-top: 4px; }
+
+/* Tema overrides */
+[data-theme="bloomberg"] .no-fu__zone {
+  background: linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%);
+  border-color: #4a4a4a;
+  color: #e8e8e8;
+}
+[data-theme="bloomberg"] .no-fu__zone--drag {
+  background: #3a2a18;
+  border-color: #d4a76a;
+  color: #e8c084;
+}
+[data-theme="bloomberg"] .no-fu__zone-icon { color: #d4a76a; }
+[data-theme="bloomberg"] .no-fu__item { background: #2a2a2a; border-color: #3a3a3a; color: #e8e8e8; }
+[data-theme="bloomberg"] .no-fu__item-thumb { background: #1a1a1a; border-color: #3a3a3a; color: #888; }
+[data-theme="bloomberg"] .no-fu__item-size { color: #888; }

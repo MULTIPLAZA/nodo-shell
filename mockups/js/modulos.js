@@ -396,6 +396,41 @@ window.MODULOS.biblioteca = function (container) {
           </div>
         </div>
 
+        <!-- ===== WIZARD ===== -->
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">🪜 Wizard / Stepper (con validación por paso)</div>
+          <div style="padding:10px;height:380px;" data-demo="wizard"></div>
+        </div>
+
+        <!-- ===== KANBAN ===== -->
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">📋 Kanban (drag & drop entre columnas)</div>
+          <div style="padding:10px;height:340px;" data-demo="kanban"></div>
+        </div>
+
+        <!-- ===== TREEVIEW ===== -->
+        <div class="form__section">
+          <div class="form__section-title">🌳 TreeView (jerárquico)</div>
+          <div style="padding:10px;height:360px;overflow:auto;" data-demo="tree"></div>
+        </div>
+
+        <!-- ===== FILE UPLOAD ===== -->
+        <div class="form__section">
+          <div class="form__section-title">📤 FileUpload (dropzone + preview)</div>
+          <div style="padding:10px;" data-demo="fileupload"></div>
+        </div>
+
+        <!-- ===== DATA EXPORT ===== -->
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">⤓ DataExport (CSV / JSON / PDF imprimible)</div>
+          <div style="padding:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;" data-demo="export">
+            <span style="color:var(--text-muted);font-size:12px;">5 ventas mock:</span>
+            <span data-role="export-direct" style="display:inline-flex;gap:4px;flex-wrap:wrap;"></span>
+            <span style="color:var(--text-muted);font-size:11px;">o usá el botón con dropdown:</span>
+            <span data-role="export-button"></span>
+          </div>
+        </div>
+
         <!-- ===== AGENDA reference ===== -->
         <div class="form__section" style="grid-column:span 2;">
           <div class="form__section-title">🗓 Agenda</div>
@@ -564,4 +599,190 @@ window.MODULOS.biblioteca = function (container) {
       title: "Imagen de ejemplo"
     });
   };
+
+  /* ---------- Wizard ---------- */
+  const wContainer = container.querySelector('[data-demo="wizard"]');
+  let wRefs = {};
+  NC.Wizard.create({
+    container: wContainer,
+    data: {},
+    steps: [
+      {
+        id: "datos",
+        label: "Datos del cliente",
+        sub: "Razón social y RUC",
+        render(panel, ctx) {
+          panel.innerHTML = `<p style="margin:0 0 8px;color:var(--text-muted);font-size:12px;">Paso 1 de 3 — Datos básicos.</p><div data-fld></div>`;
+          const f = panel.querySelector('[data-fld]');
+          wRefs.razon = I.text({ container: f, label: "Razón social", required: true, value: ctx.razon || "" });
+          wRefs.ruc   = I.ruc({  container: f, label: "RUC",          required: true, value: ctx.ruc   || "" });
+        },
+        validate(ctx) {
+          const ok1 = wRefs.razon.validate(), ok2 = wRefs.ruc.validate();
+          if (!ok1 || !ok2) return "Completá los campos obligatorios";
+          ctx.razon = wRefs.razon.getValue();
+          ctx.ruc   = wRefs.ruc.getValue();
+          return true;
+        }
+      },
+      {
+        id: "contacto",
+        label: "Contacto",
+        sub: "Teléfono, email, dirección",
+        render(panel, ctx) {
+          panel.innerHTML = `<p style="margin:0 0 8px;color:var(--text-muted);font-size:12px;">Paso 2 de 3 — Cómo contactar al cliente.</p><div data-fld></div>`;
+          const f = panel.querySelector('[data-fld]');
+          wRefs.tel   = I.phone({ container: f, label: "Teléfono",      required: true, value: ctx.tel   || "" });
+          wRefs.email = I.email({ container: f, label: "Email",                          value: ctx.email || "" });
+          wRefs.dir   = I.text({  container: f, label: "Dirección",                      value: ctx.dir   || "" });
+        },
+        validate(ctx) {
+          const ok = wRefs.tel.validate() && wRefs.email.validate();
+          if (!ok) return "Revisá teléfono y email";
+          ctx.tel = wRefs.tel.getValue(); ctx.email = wRefs.email.getValue(); ctx.dir = wRefs.dir.getValue();
+          return true;
+        }
+      },
+      {
+        id: "confirmar",
+        label: "Confirmación",
+        sub: "Revisá y guardá",
+        render(panel, ctx) {
+          panel.innerHTML = `
+            <p style="margin:0 0 12px;color:var(--text-muted);font-size:12px;">Paso 3 de 3 — Verificá los datos y confirmá.</p>
+            <table style="width:100%;font-size:12px;border-collapse:collapse;">
+              <tr><td style="padding:6px 8px;color:var(--text-muted);width:140px;">Razón social</td><td style="padding:6px 8px;font-weight:600;">${(ctx.razon || "—")}</td></tr>
+              <tr><td style="padding:6px 8px;color:var(--text-muted);">RUC</td><td style="padding:6px 8px;font-family:var(--font-mono);">${(ctx.ruc || "—")}</td></tr>
+              <tr><td style="padding:6px 8px;color:var(--text-muted);">Teléfono</td><td style="padding:6px 8px;font-family:var(--font-mono);">${I.formatPhone(ctx.tel || "")}</td></tr>
+              <tr><td style="padding:6px 8px;color:var(--text-muted);">Email</td><td style="padding:6px 8px;">${(ctx.email || "—")}</td></tr>
+              <tr><td style="padding:6px 8px;color:var(--text-muted);">Dirección</td><td style="padding:6px 8px;">${(ctx.dir || "—")}</td></tr>
+            </table>
+          `;
+        }
+      }
+    ],
+    onComplete(ctx) {
+      NC.Toast.success("Cliente creado: " + (ctx.razon || "(sin nombre)"), { title: "Wizard completado" });
+    },
+    onCancel() {
+      NC.Toast.info("Wizard cancelado");
+    }
+  });
+
+  /* ---------- Kanban ---------- */
+  NC.Kanban.create({
+    container: container.querySelector('[data-demo="kanban"]'),
+    title: "Tablero de OT en taller (arrastrá las cards entre columnas)",
+    columns: [
+      { id: "pendiente", title: "Pendientes",  color: "#999" },
+      { id: "proceso",   title: "En proceso",  color: "#1e6bb0" },
+      { id: "terminada", title: "Terminadas",  color: "#4a7d28" },
+      { id: "facturada", title: "Facturadas",  color: "#d4a106" },
+      { id: "entregada", title: "Entregadas",  color: "#2f7d2f" }
+    ],
+    cards: [
+      { id: "ot-1", columnId: "pendiente", title: "OT-2026-00091", subtitle: "Cliente: Don Nelson · Hilux 2015", tag: "B2B", color: "#1e6bb0" },
+      { id: "ot-2", columnId: "pendiente", title: "OT-2026-00092", subtitle: "María Vázquez · Frontier",         meta: "ingresó hoy" },
+      { id: "ot-3", columnId: "proceso",   title: "OT-2026-00088", subtitle: "Taller Rápido · Bomba Bosch",      tag: "URGENTE", color: "#a40000" },
+      { id: "ot-4", columnId: "proceso",   title: "OT-2026-00085", subtitle: "Sergio Martínez · Diagnóstico",     meta: "2 días" },
+      { id: "ot-5", columnId: "terminada", title: "OT-2026-00089", subtitle: "Don Nelson · 4 inyectores",         tag: "B2B" },
+      { id: "ot-6", columnId: "terminada", title: "OT-2026-00084", subtitle: "Carlos Ramírez · Limpieza C2" },
+      { id: "ot-7", columnId: "facturada", title: "OT-2026-00086", subtitle: "Luis González · Iveco common-rail", tag: "B2B" },
+      { id: "ot-8", columnId: "entregada", title: "OT-2026-00087", subtitle: "El Águila · Lote 6 inyectores",     color: "#4a7d28" }
+    ],
+    onMove: (card, from, to) => {
+      NC.Toast.info(card.title + " movida a " + to);
+    },
+    onCardClick: (card) => {
+      NC.Modal.open({
+        title: card.title,
+        body: `<p><strong>${card.subtitle || ""}</strong></p><p style="color:var(--text-muted);font-size:11px;">Estado actual: <code>${card.columnId}</code></p>`,
+        footer: `<button class="btn btn--primary" onclick="NodoComponents.Modal.close()">Cerrar</button>`,
+        size: "sm"
+      });
+    }
+  });
+
+  /* ---------- TreeView ---------- */
+  const folderIcon = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4l1-2h5l2 2h6v9H1V4z"/></svg>`;
+  const fileIcon   = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v11H3V1zm1 1v12h8V5H9V2H4z"/></svg>`;
+  NC.TreeView.create({
+    container: container.querySelector('[data-demo="tree"]'),
+    nodes: [
+      { id: "1", label: "Plan de cuentas", icon: folderIcon, badge: 4, expanded: true, children: [
+        { id: "1.1", label: "1. Activo", icon: folderIcon, badge: 3, expanded: true, children: [
+          { id: "1.1.1", label: "1.1.01 Caja", icon: fileIcon },
+          { id: "1.1.2", label: "1.1.02 Banco Continental", icon: fileIcon },
+          { id: "1.1.3", label: "1.1.03 Cuentas a cobrar", icon: fileIcon }
+        ]},
+        { id: "1.2", label: "2. Pasivo", icon: folderIcon, children: [
+          { id: "1.2.1", label: "2.1.01 Proveedores", icon: fileIcon },
+          { id: "1.2.2", label: "2.1.02 IVA débito fiscal", icon: fileIcon }
+        ]},
+        { id: "1.3", label: "3. Patrimonio Neto", icon: folderIcon, children: [
+          { id: "1.3.1", label: "3.1.01 Capital", icon: fileIcon }
+        ]},
+        { id: "1.4", label: "4. Resultados", icon: folderIcon, children: [
+          { id: "1.4.1", label: "4.1.01 Ventas", icon: fileIcon },
+          { id: "1.4.2", label: "4.2.01 Costo de ventas", icon: fileIcon }
+        ]}
+      ]}
+    ],
+    onSelect: (node) => {
+      // muestra qué se seleccionó en un toast pequeño
+      if (node.icon === fileIcon) NC.Toast.info("Cuenta: " + node.label, { duration: 2000 });
+    }
+  });
+
+  /* ---------- FileUpload ---------- */
+  NC.FileUpload.create({
+    container: container.querySelector('[data-demo="fileupload"]'),
+    accept: ".pdf,.png,.jpg,.jpeg,image/*",
+    multiple: true,
+    maxSize: 5 * 1024 * 1024, // 5MB
+    maxFiles: 5,
+    onChange: (files) => {
+      // El cliente puede llamar a su API acá
+      console.log("Archivos seleccionados:", files);
+    }
+  });
+
+  /* ---------- DataExport ---------- */
+  const ventasMock = [
+    { nro: "FACT-001-001-0000134", fecha: "2026-04-19", cliente: "Autoservicio El Águila", tipo: "Factura A4", metodo: "Efectivo", total: 1080000 },
+    { nro: "FACT-001-001-0000135", fecha: "2026-04-23", cliente: "Luis González SA",       tipo: "Factura A4", metodo: "A cuenta",  total: 510000 },
+    { nro: "TICK-0000201",         fecha: "2026-04-23", cliente: "Juan Pablo Ayala",       tipo: "Ticket",     metodo: "Efectivo",  total: 250000 },
+    { nro: "FACT-001-001-0000133", fecha: "2026-04-22", cliente: "Mecánica Integral SRL",  tipo: "Factura A4", metodo: "Mixto",     total: 700000 },
+    { nro: "FACT-001-001-0000132", fecha: "2026-04-21", cliente: "Don Nelson",              tipo: "Factura A4", metodo: "Transf.",   total: 920000 }
+  ];
+  const ventasCols = [
+    { key: "nro",     label: "Comprobante" },
+    { key: "fecha",   label: "Fecha" },
+    { key: "cliente", label: "Cliente" },
+    { key: "tipo",    label: "Tipo" },
+    { key: "metodo",  label: "Método" },
+    { key: "total",   label: "Total (Gs.)", formatter: v => I.formatMoney(v) }
+  ];
+  // Botones directos
+  const ed = container.querySelector('[data-role="export-direct"]');
+  ["csv","json","pdf"].forEach(fmt => {
+    const b = document.createElement("button");
+    b.className = "btn";
+    b.textContent = fmt === "csv" ? "📊 CSV" : fmt === "json" ? "📦 JSON" : "🖨 PDF";
+    b.onclick = () => {
+      if (fmt === "csv")  NC.DataExport.toCSV(ventasMock, ventasCols, "ventas-demo.csv");
+      if (fmt === "json") NC.DataExport.toJSON(ventasMock, "ventas-demo.json");
+      if (fmt === "pdf")  NC.DataExport.toPrintablePDF(ventasMock, ventasCols, { title: "Ventas del día (demo)", subtitle: "Generado desde la Biblioteca de componentes NODO Shell" });
+    };
+    ed.appendChild(b);
+  });
+  // Botón con dropdown
+  NC.DataExport.button({
+    container: container.querySelector('[data-role="export-button"]'),
+    getRows: () => ventasMock,
+    columns: ventasCols,
+    filename: "ventas",
+    title: "Reporte de Ventas",
+    subtitle: "Período: abril 2026"
+  });
 };

@@ -469,6 +469,51 @@ window.MODULOS.biblioteca = function (container) {
           </div>
         </div>
 
+        <!-- ===== DEVEXPRESS — IDENTIDAD WINFORMS ===== -->
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">🪟 NavBar (XtraNavBar / Outlook bar)</div>
+          <div style="padding:10px;display:grid;grid-template-columns:240px 1fr;gap:10px;height:380px;">
+            <div data-demo="navbar"></div>
+            <div data-demo="navbar-target" style="padding:14px;background:#fff;border:1px solid var(--border);font-size:12px;color:var(--text-muted);">
+              Click en un item del NavBar →
+            </div>
+          </div>
+        </div>
+
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">🌲 TreeList (XtraTreeList — jerarquía con columnas)</div>
+          <div style="padding:10px;height:340px;" data-demo="treelist"></div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">🔔 AlertControl (esquinero con thumbnail + acciones)</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;" data-demo="alerts">
+            <button class="btn" data-act="al-info">Alert informativo</button>
+            <button class="btn tb-btn--success" data-act="al-success">Alert success</button>
+            <button class="btn tb-btn--warning" data-act="al-warning">Alert warning + acciones</button>
+            <button class="btn tb-btn--danger"  data-act="al-danger">Alert danger + thumbnail</button>
+          </div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">⏳ WaitForm (overlay loading clásico)</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;" data-demo="wait">
+            <button class="btn" data-act="wait-full">Mostrar fullscreen 2.5s</button>
+            <button class="btn" data-act="wait-progress">Con progreso (0% → 100%)</button>
+            <button class="btn" data-act="wait-inline">Inline (en este panel)</button>
+          </div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">📋 VerticalGrid / PropertyGrid (campos como filas)</div>
+          <div style="padding:10px;height:380px;overflow:auto;" data-demo="vgrid"></div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">📐 LayoutControl (form denso con grupos colapsables)</div>
+          <div style="padding:10px;height:380px;overflow:auto;" data-demo="layout"></div>
+        </div>
+
         <!-- ===== AGENDA reference ===== -->
         <div class="form__section" style="grid-column:span 2;">
           <div class="form__section-title">🗓 Agenda</div>
@@ -964,4 +1009,230 @@ window.MODULOS.biblioteca = function (container) {
     title: "Reporte de Ventas",
     subtitle: "Período: abril 2026"
   });
+
+  /* ============================================================
+     DEVEXPRESS WINFORMS — showcase
+     ============================================================ */
+
+  /* ---------- NavBar ---------- */
+  const ic = {
+    user:   `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a3 3 0 100 6 3 3 0 000-6zM2 14a6 6 0 0112 0H2z"/></svg>`,
+    bill:   `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v11H3V1zm1 1v12h8V5h-2V2H4z"/></svg>`,
+    money:  `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM8 4v1h2v1H6v1h4v1H6v1h2v1h1v-1h2V9H9V8h3V7H9V6h3V5H9V4z"/></svg>`,
+    box:    `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5l6-3 6 3v6l-6 3-6-3V5z"/></svg>`,
+    chart:  `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 14V6h2v8H2zm4 0V2h2v12H6zm4 0V8h2v6h-2zm4 0V4h2v10h-2z"/></svg>`,
+    config: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a3 3 0 100 6 3 3 0 000-6z"/></svg>`,
+    truck:  `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5h8v6H2zm9 2h3l1 2v2h-4z"/></svg>`,
+    file:   `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v11H3V1zm1 1v12h8V5h-2V2H4z"/></svg>`
+  };
+  function escTxt(s){return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  const navTarget = container.querySelector('[data-demo="navbar-target"]');
+  if (navTarget) {
+    NC.NavBar.create({
+      container: container.querySelector('[data-demo="navbar"]'),
+      title: "Módulos del sistema",
+      groups: [
+        { id: "g1", title: "Maestros", icon: ic.user, expanded: true, items: [
+          { id: "cli",   label: "Clientes",     icon: ic.user,  badge: 247 },
+          { id: "prov",  label: "Proveedores",  icon: ic.truck },
+          { id: "prod",  label: "Productos",    icon: ic.box,   badge: "1.2K" },
+          { id: "vend",  label: "Vendedores",   icon: ic.user }
+        ]},
+        { id: "g2", title: "Comprobantes", icon: ic.bill, expanded: true, items: [
+          { id: "fact", label: "Facturas",       icon: ic.bill, badge: 18 },
+          { id: "nc",   label: "Notas crédito",  icon: ic.bill },
+          { id: "rem",  label: "Remisión",       icon: ic.truck },
+          { id: "pres", label: "Presupuestos",   icon: ic.file, badge: 5 }
+        ]},
+        { id: "g3", title: "Tesorería", icon: ic.money, items: [
+          { id: "caja", label: "Caja diaria",       icon: ic.money },
+          { id: "bco",  label: "Bancos",            icon: ic.money },
+          { id: "ctac", label: "Cuentas corrientes",icon: ic.money }
+        ]},
+        { id: "g4", title: "Reportes", icon: ic.chart, items: [
+          { id: "rep1", label: "Ventas",            icon: ic.chart },
+          { id: "rep2", label: "OT por estado",     icon: ic.chart },
+          { id: "rep3", label: "Top servicios",     icon: ic.chart }
+        ]},
+        { id: "g5", title: "Configuración", icon: ic.config, items: [
+          { id: "cfg1", label: "Datos empresa",     icon: ic.config },
+          { id: "cfg2", label: "SIFEN",             icon: ic.config },
+          { id: "cfg3", label: "Usuarios",          icon: ic.user }
+        ]}
+      ],
+      onSelect: (item) => {
+        if (!item) return;
+        navTarget.style.color = "var(--text)";
+        navTarget.innerHTML = `<strong style="color:var(--ofc-blue-900);">Item seleccionado</strong>
+          <div style="margin-top:6px;font-family:var(--font-mono);">id: ${escTxt(item.id)}</div>
+          <div style="margin-top:2px;">label: ${escTxt(item.label)}</div>
+          ${item.badge !== undefined ? `<div style="margin-top:2px;">badge: ${escTxt(item.badge)}</div>` : ""}
+          <div style="margin-top:10px;color:var(--text-muted);font-size:11px;">
+            En un sistema real esto abriría el módulo correspondiente vía
+            <code>__shell.openModule(item.id)</code>.
+          </div>`;
+      }
+    });
+  }
+
+  /* ---------- TreeList ---------- */
+  const folderIc = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4l1-2h5l2 2h6v9H1V4z"/></svg>`;
+  const accountIc = `<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.4"/></svg>`;
+  const tlc = container.querySelector('[data-demo="treelist"]');
+  if (tlc) {
+    NC.TreeList.create({
+      container: tlc,
+      columns: [
+        { key: "label",  label: "Cuenta",       width: 280 },
+        { key: "code",   label: "Código",       width: 100 },
+        { key: "saldo",  label: "Saldo (Gs.)",  type: "money", width: 140, format: v => v ? I.formatMoney(v) : "" },
+        { key: "tipo",   label: "Tipo" }
+      ],
+      expandColumn: "label",
+      icon: (n) => n.children && n.children.length ? folderIc : accountIc,
+      data: [
+        { id: 1, label: "Activo", code: "1", tipo: "Grupo", expanded: true, children: [
+          { id: 11, label: "Activo Corriente", code: "1.1", tipo: "Subgrupo", expanded: true, children: [
+            { id: 111, label: "Caja",                   code: "1.1.01", saldo: 4520000, tipo: "Imputable" },
+            { id: 112, label: "Banco Continental Cta Cte",code: "1.1.02", saldo: 12380000, tipo: "Imputable" },
+            { id: 113, label: "Banco Itaú Caja de Ahorro", code: "1.1.03", saldo: 3450000, tipo: "Imputable" },
+            { id: 114, label: "Cuentas a cobrar B2B",   code: "1.1.04", saldo: 8920000, tipo: "Imputable" }
+          ]},
+          { id: 12, label: "Activo No Corriente", code: "1.2", tipo: "Subgrupo", children: [
+            { id: 121, label: "Bienes de uso",         code: "1.2.01", saldo: 35000000, tipo: "Imputable" }
+          ]}
+        ]},
+        { id: 2, label: "Pasivo", code: "2", tipo: "Grupo", children: [
+          { id: 21, label: "Proveedores",              code: "2.1.01", saldo: 6750000, tipo: "Imputable" },
+          { id: 22, label: "IVA débito fiscal",        code: "2.1.02", saldo: 1820000, tipo: "Imputable" }
+        ]},
+        { id: 3, label: "Resultados", code: "4", tipo: "Grupo", expanded: true, children: [
+          { id: 31, label: "Ventas servicios",          code: "4.1.01", saldo: 22500000, tipo: "Imputable" },
+          { id: 32, label: "Costo de ventas",           code: "5.1.01", saldo: 9100000, tipo: "Imputable" },
+          { id: 33, label: "Gastos administrativos",    code: "5.2.01", saldo: 3450000, tipo: "Imputable" }
+        ]}
+      ],
+      onSelect: (n) => {
+        if (n.tipo === "Imputable") NC.Toast.info("Cuenta " + n.code + " — " + n.label);
+      }
+    });
+  }
+
+  /* ---------- AlertControl ---------- */
+  const ca = container.querySelector('[data-demo="alerts"]');
+  if (ca) {
+    ca.querySelector('[data-act="al-info"]').onclick = () => NC.Alert.info("Sistema sincronizado", "Última sincronización: hace 2 minutos. Todos los datos están al día.");
+    ca.querySelector('[data-act="al-success"]').onclick = () => NC.Alert.success("Factura emitida", "FACT-001-001-0000136 enviada a SIFEN exitosamente.", {
+      actions: [{ label: "Ver KUDE", primary: true, onClick: () => NC.Toast.info("Abriendo KUDE...") }, { label: "Imprimir" }]
+    });
+    ca.querySelector('[data-act="al-warning"]').onclick = () => NC.Alert.warning("Certificado por vencer", "El certificado SIFEN vence en 14 días. Renová para evitar interrupciones.", {
+      actions: [
+        { label: "Renovar ahora", primary: true, onClick: () => NC.Toast.info("Iniciando renovación...") },
+        { label: "Recordar mañana" }
+      ]
+    });
+    ca.querySelector('[data-act="al-danger"]').onclick = () => NC.Alert.danger("Conexión a SIFEN perdida", "No se pudieron emitir 3 facturas. Reintentando en 30s...", {
+      thumbnail: "<span style='font-size:28px;'>⚠</span>",
+      duration: 8000,
+      actions: [{ label: "Ver pendientes", onClick: () => NC.Toast.warning("3 facturas en cola") }]
+    });
+  }
+
+  /* ---------- WaitForm ---------- */
+  const cw = container.querySelector('[data-demo="wait"]');
+  if (cw) {
+    cw.querySelector('[data-act="wait-full"]').onclick = () => {
+      const w = NC.WaitForm.show({ title: "Procesando…", message: "Conectando con SIFEN" });
+      setTimeout(() => w.close(), 2500);
+    };
+    cw.querySelector('[data-act="wait-progress"]').onclick = () => {
+      const w = NC.WaitForm.show({ title: "Generando reporte", message: "0% — Recolectando datos" });
+      let p = 0;
+      const t = setInterval(() => {
+        p += 12;
+        if (p >= 100) {
+          clearInterval(t);
+          w.update({ message: "100% — Listo!" });
+          setTimeout(() => { w.close(); NC.Toast.success("Reporte generado"); }, 400);
+        } else {
+          w.update({ message: p + "% — " + (p<40?"Recolectando datos":p<70?"Calculando totales":"Generando PDF") });
+        }
+      }, 250);
+    };
+    cw.querySelector('[data-act="wait-inline"]').onclick = () => {
+      const target = container.querySelector('[data-demo="vgrid"]');
+      const w = NC.WaitForm.show({ title: "Cargando configuración", message: "Por favor esperá…", container: target });
+      setTimeout(() => { w.close(); NC.Toast.info("Listo"); }, 2000);
+    };
+  }
+
+  /* ---------- VerticalGrid ---------- */
+  const cvg = container.querySelector('[data-demo="vgrid"]');
+  if (cvg) {
+    NC.VerticalGrid.create({
+      container: cvg,
+      headers: ["Propiedad", "Valor"],
+      fields: [
+        { type: "category", label: "Datos generales" },
+        { key: "razon",  label: "Razón social", type: "text", value: "Taller Jordan", required: true },
+        { key: "ruc",    label: "RUC",          type: "text", value: "80012345-6" },
+        { key: "tel",    label: "Teléfono",     type: "text", value: "021 940-558" },
+        { key: "email",  label: "Email",        type: "text", value: "taller.jordan@gmail.com" },
+        { type: "category", label: "Datos fiscales" },
+        { key: "tipo",   label: "Tipo IVA",     type: "select", value: "general", options: [{value:"general",label:"Régimen general"},{value:"contribuyente",label:"Contribuyente"},{value:"exento",label:"Exento"}] },
+        { key: "timb",   label: "Timbrado",     type: "text", value: "12345678" },
+        { key: "estab",  label: "Establecim.",  type: "text", value: "001" },
+        { key: "punto",  label: "Punto exped.", type: "text", value: "001" },
+        { type: "category", label: "Preferencias" },
+        { key: "auto",   label: "Auto-imprimir",  type: "switch", value: true },
+        { key: "email_aut", label: "Email automático", type: "switch", value: false },
+        { key: "tema",   label: "Tema visual",  type: "select", value: "office2010", options: [{value:"office2010",label:"Office 2010"},{value:"bloomberg",label:"Bloomberg Pro"},{value:"slate",label:"Slate"}] },
+        { key: "obs",    label: "Observaciones",type: "textarea", value: "Cliente desde 2005. RUC habilitado para SIFEN." }
+      ],
+      editable: true,
+      onChange: (k, v) => console.log("VG change:", k, v)
+    });
+  }
+
+  /* ---------- LayoutControl ---------- */
+  const cly = container.querySelector('[data-demo="layout"]');
+  if (cly) {
+    NC.Layout.create({
+      container: cly,
+      groups: [
+        {
+          title: "Datos del cliente",
+          columns: 2,
+          items: [
+            { type: "text",  key: "razon", label: "Razón social", required: true, full: true, value: "Don Nelson SRL" },
+            { type: "text",  key: "ruc",   label: "RUC",          required: true, value: "80045677-2" },
+            { type: "select",key: "tipo",  label: "Tipo",         options: [{value:"B2C",label:"Particular"},{value:"B2B",label:"Empresa"}], value: "B2B" },
+            { type: "text",  key: "tel",   label: "Teléfono",     value: "021-908-115" },
+            { type: "text",  key: "email", label: "Email",        value: "admin@donnelson.com.py" },
+            { type: "text",  key: "dir",   label: "Dirección",    full: true, value: "Av. Mariscal Estigarribia 880, San Lorenzo" }
+          ]
+        },
+        {
+          title: "Condiciones comerciales",
+          columns: 3,
+          items: [
+            { type: "select", key: "moneda", label: "Moneda",   options: ["Gs.","USD","BRL"], value: "Gs." },
+            { type: "money",  key: "limite", label: "Lím. crédito", value: 5000000 },
+            { type: "number", key: "plazo",  label: "Plazo (días)", value: 30 },
+            { type: "switch", key: "vip",    label: "Cliente VIP", value: true },
+            { type: "switch", key: "block",  label: "Bloqueado",   value: false },
+            { type: "select", key: "vend",   label: "Vendedor",    options: ["Darío","Sofía","Luis"], value: "Darío" }
+          ]
+        },
+        {
+          title: "Notas internas",
+          columns: 1,
+          collapsed: true,
+          items: [
+            { type: "textarea", key: "notas", label: "Observaciones", full: true, rows: 3, placeholder: "Apuntes solo visibles para vendedores..." }
+          ]
+        }
+      ]
+    });
+  }
 };

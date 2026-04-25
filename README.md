@@ -67,6 +67,12 @@ Pequeña librería de componentes vanilla, tema-aware, listos para usar en cualq
 | **`NodoComponents.TreeView`** | Árbol jerárquico expandible con icono y badge opcional por nodo. Selección con click. Callbacks `onSelect(node)` y `onExpand(node, isExpanded)`. API: `expandAll`, `collapseAll`, `select`. |
 | **`NodoComponents.FileUpload`** | Dropzone con drag&drop + click. Preview de imágenes inline. Validación de `accept`, `maxSize`, `maxFiles`. API: `getFiles()`, `clear()`. |
 | **`NodoComponents.DataExport`** | Helpers funcionales: `toCSV(rows, columns, filename)` (UTF-8 BOM + `;` Excel-friendly) · `toJSON(data, filename)` · `toPrintablePDF(rows, columns, {title, subtitle})` (abre ventana imprimible, browser ofrece "Guardar como PDF"). Botón con dropdown: `button({container, getRows, columns, formats})`. |
+| **`NodoComponents.NavBar`** | XtraNavBar / Outlook bar — sidebar con grupos colapsables, items con icono+label+badge, callback `onSelect(item)`. Para árbol de navegación lateral. API: `select(id)`, `setBadge(id, n)`. |
+| **`NodoComponents.TreeList`** | XtraTreeList — combinación tree + grid: jerarquía con columnas tipadas (text/num/money/center). `expandColumn` define qué columna lleva el toggle. Datos planos con `parentId` o anidados con `children`. API: `expandAll`, `collapseAll`, `select`. |
+| **`NodoComponents.Alert`** | AlertControl — notificación esquinera (bottom-right o top-right) con thumbnail, título, mensaje y botones de acción (`actions: [{label, primary, onClick}]`). Helpers: `success`, `warning`, `danger`, `info`. Diferente del Toast: más rica, persistente, con CTA. |
+| **`NodoComponents.WaitForm`** | XtraWaitForm — overlay loading con spinner anillo clásico DevExpress. Modo fullscreen o `inline` (overlay sobre un container específico). API: `update({title, message})` y `close()`. |
+| **`NodoComponents.VerticalGrid`** | XtraVerticalGrid / PropertyGrid — campos como filas, valores editables a la derecha. Soporta categorías-separador, types: text/number/money/date/select/switch/textarea/password. API: `getData()`. |
+| **`NodoComponents.Layout`** | XtraLayoutControl — form denso con grupos colapsables, columnas configurables (1-4), items con `span`/`full`, separadores, etiquetas alineadas a la derecha. API: `getData()`. |
 
 #### Ejemplos rápidos
 
@@ -156,6 +162,7 @@ nodo-shell/
     │   ├── components-overlay.css  modal, toast, document viewer
     │   ├── components-data.css     wizard, kanban, treeview
     │   ├── components-files.css    file upload (data export sin css propio)
+    │   ├── components-devexpress.css  navbar, treelist, alert, waitform, vgrid, layout
     │   ├── components-agenda.css   calendario / agenda (vista mes + lista)
     │   ├── themes.css              sistema de temas (Office Blue/Bloomberg/Slate)
     │   └── keyboard.css            focus visible, badges F#, overlay F1
@@ -168,6 +175,7 @@ nodo-shell/
     │   ├── components-overlay.js   NodoComponents.Modal / Toast / DocumentViewer
     │   ├── components-data.js      NodoComponents.Wizard / Kanban / TreeView
     │   ├── components-files.js     NodoComponents.FileUpload / DataExport
+    │   ├── components-devexpress.js NodoComponents.NavBar / TreeList / Alert / WaitForm / VerticalGrid / Layout
     │   ├── components-agenda.js    NodoComponents.Agenda
     │   ├── mock-data.js            datos PY de ejemplo
     │   └── modulos.js              registry de módulos (clientes, agenda, biblioteca...)

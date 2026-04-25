@@ -1,0 +1,592 @@
+/* ===========================================================
+   NODO Shell — Component: Agenda (vista Mes + Agenda lista)
+   ===========================================================
+   Componente reusable para llevar tareas/eventos estilo Google
+   Calendar, sobre cualquier sistema construido con NODO Shell.
+   - Vista Mes: grilla 7×N con eventos como chips
+   - Vista Agenda: lista cronológica agrupada por día
+   - Tema-aware (Office/Bloomberg/Slate)
+   =========================================================== */
+
+.agenda {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-ribbon);
+  font-family: var(--font-ui);
+  color: var(--text);
+  min-height: 0;
+}
+
+/* ---------- Toolbar ---------- */
+.agenda__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 5px 8px;
+  background: linear-gradient(180deg, #eef2f7 0%, #dce3ec 100%);
+  border-bottom: 1px solid var(--border-strong);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+  flex-shrink: 0;
+}
+.agenda__nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.agenda__title {
+  font-size: 14px;
+  font-weight: var(--fw-semi);
+  color: var(--ofc-blue-900);
+  margin: 0 var(--sp-3);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  min-width: 200px;
+  text-transform: capitalize;
+}
+.agenda__viewswitch {
+  display: flex;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.agenda__viewswitch button {
+  padding: 3px 12px;
+  font-size: var(--fs-sm);
+  background: linear-gradient(180deg, #fdfdfe 0%, #e6ecf3 100%);
+  color: var(--text);
+  border: none;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+.agenda__viewswitch button:last-child { border-right: none; }
+.agenda__viewswitch button:hover {
+  background: var(--bg-hover);
+}
+.agenda__viewswitch button[aria-selected="true"] {
+  background: linear-gradient(180deg, var(--ofc-blue-500) 0%, var(--ofc-blue-700) 100%);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+  font-weight: var(--fw-semi);
+}
+
+.agenda__search {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  height: 22px;
+  background: #fff;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+}
+.agenda__search input {
+  border: none;
+  outline: none;
+  font-size: var(--fs-sm);
+  width: 200px;
+  background: transparent;
+  color: var(--text);
+}
+.agenda__search svg { width: 14px; height: 14px; color: var(--text-muted); }
+
+.agenda__spacer { flex: 1; }
+
+/* ---------- Vista Mes ---------- */
+.agenda__month {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+  min-height: 0;
+}
+.agenda__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: linear-gradient(180deg, #eef3fa 0%, #d6dfed 100%);
+  border-bottom: 1px solid var(--border-strong);
+  flex-shrink: 0;
+}
+.agenda__weekdays div {
+  padding: 5px 8px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semi);
+  color: var(--ofc-blue-900);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-right: 1px solid var(--sil-400);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  text-align: left;
+}
+.agenda__weekdays div:last-child { border-right: none; }
+/* Domingo en rojo sutil */
+.agenda__weekdays div:nth-child(7) { color: #a40000; }
+
+.agenda__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 1fr;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.agenda__day {
+  position: relative;
+  border-right: 1px solid #edeff2;
+  border-bottom: 1px solid #edeff2;
+  padding: 3px 4px 4px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 80px;
+  overflow: hidden;
+  transition: background var(--t-fast);
+}
+.agenda__day:hover {
+  background: #fffbea;
+}
+.agenda__day--other {
+  background: #f7f8fa;
+  color: var(--text-muted);
+}
+.agenda__day--other .agenda__day-num { color: var(--text-muted); }
+.agenda__day--today {
+  background: linear-gradient(180deg, #fff8d6 0%, #fef0a5 100%);
+  box-shadow: inset 0 0 0 2px var(--ofc-blue-700);
+}
+.agenda__day--selected {
+  outline: 2px solid var(--ofc-blue-700);
+  outline-offset: -2px;
+  z-index: 2;
+}
+.agenda__day--weekend { background: #fafbfd; }
+.agenda__day--weekend.agenda__day--today { background: linear-gradient(180deg, #fff8d6 0%, #fef0a5 100%); }
+
+.agenda__day-num {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semi);
+  color: var(--text);
+  align-self: flex-start;
+  padding: 0 4px;
+  border-radius: 2px;
+  line-height: 1.4;
+}
+.agenda__day--today .agenda__day-num {
+  background: var(--ofc-blue-700);
+  color: #fff;
+  padding: 0 6px;
+  font-weight: var(--fw-bold);
+}
+
+.agenda__events {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Chip de evento dentro de un día */
+.agenda__chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 5px;
+  font-size: var(--fs-xs);
+  background: var(--ofc-blue-100);
+  color: var(--ofc-blue-900);
+  border: 1px solid var(--ofc-blue-300);
+  border-left: 3px solid var(--ofc-blue-700);
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  transition: filter var(--t-fast), transform var(--t-fast);
+  flex-shrink: 0;
+}
+.agenda__chip:hover { filter: brightness(1.04); transform: translateX(1px); }
+.agenda__chip-time {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-semi);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.agenda__chip-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.agenda__chip--allday { font-weight: var(--fw-semi); }
+
+/* Variantes de color para chips (mapea a estados / categorías del cliente) */
+.agenda__chip--default  { background: #e0efff; color: #0a4c82; border-color: #a6c8e8; border-left-color: #1e6bb0; }
+.agenda__chip--success  { background: #e6f4d7; color: #2f6f14; border-color: #a9c780; border-left-color: #4a7d28; }
+.agenda__chip--warning  { background: #fef4e2; color: #8a5400; border-color: #e3c577; border-left-color: #d4a106; }
+.agenda__chip--danger   { background: #fde7e9; color: #a40000; border-color: #e39090; border-left-color: #a40000; }
+.agenda__chip--info     { background: #e0efff; color: #0a4c82; border-color: #a6c8e8; border-left-color: #1e6bb0; }
+.agenda__chip--purple   { background: #e8e0f5; color: #5e2a8a; border-color: #c5b3df; border-left-color: #6b3fa0; }
+.agenda__chip--teal     { background: #d8f0ee; color: #1f6b6b; border-color: #8acec5; border-left-color: #2d8a8a; }
+.agenda__chip--done {
+  text-decoration: line-through;
+  opacity: 0.65;
+}
+
+.agenda__chip-more {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 1px 5px;
+  font-style: italic;
+  cursor: pointer;
+}
+.agenda__chip-more:hover { color: var(--ofc-blue-700); text-decoration: underline; }
+
+/* ---------- Vista Agenda (lista cronológica) ---------- */
+.agenda__list {
+  flex: 1;
+  overflow: auto;
+  background: #fdfdfe;
+  padding: 0;
+  min-height: 0;
+}
+.agenda__list-day {
+  border-bottom: 1px solid var(--border);
+}
+.agenda__list-day-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg, #eef3fa 0%, #d6dfed 100%);
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semi);
+  color: var(--ofc-blue-900);
+  border-bottom: 1px solid var(--border-strong);
+  z-index: 2;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  text-transform: capitalize;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.agenda__list-day-header .agenda__list-day-relative {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: var(--fw-regular);
+  text-transform: lowercase;
+}
+.agenda__list-day-header.is-today {
+  background: linear-gradient(180deg, #fff8d6 0%, #fef0a5 100%);
+  border-bottom-color: #d4a106;
+}
+
+.agenda__list-event {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px 6px 24px;
+  border-bottom: 1px solid #edeff2;
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.agenda__list-event:last-child { border-bottom: none; }
+.agenda__list-event:hover { background: #fffbea; }
+.agenda__list-event[aria-selected="true"] {
+  background: var(--ofc-blue-100);
+  outline: 1px solid var(--ofc-blue-700);
+  outline-offset: -1px;
+}
+.agenda__list-event-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1.5px solid;
+}
+.agenda__list-event-time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  width: 110px;
+  flex-shrink: 0;
+  text-align: left;
+}
+.agenda__list-event-title {
+  flex: 1;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+.agenda__list-event-title strong {
+  font-weight: var(--fw-semi);
+}
+.agenda__list-event-note {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.agenda__list-event-state {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: var(--fw-semi);
+  text-transform: uppercase;
+}
+.agenda__list-event--done .agenda__list-event-title {
+  text-decoration: line-through;
+  opacity: 0.65;
+}
+
+.agenda__empty {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.agenda__empty strong { color: var(--text); display: block; margin-bottom: 6px; }
+
+/* ---------- Status bar agenda ---------- */
+.agenda__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  background: linear-gradient(180deg, #eef2f7 0%, #dce3ec 100%);
+  border-top: 1px solid var(--border-strong);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.agenda__status strong { color: var(--ofc-blue-900); }
+
+/* ---------- Form de evento (dentro del side panel) ---------- */
+.agenda-form {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.agenda-form__row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+.agenda-form__row label {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-weight: var(--fw-semi);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.agenda-form__row input[type="text"],
+.agenda-form__row input[type="date"],
+.agenda-form__row input[type="time"],
+.agenda-form__row textarea,
+.agenda-form__row select {
+  padding: 5px 7px;
+  border: 1px solid var(--sil-500);
+  background: #fff;
+  border-radius: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  outline: none;
+  width: 100%;
+}
+.agenda-form__row input:focus,
+.agenda-form__row textarea:focus,
+.agenda-form__row select:focus {
+  border-color: var(--ofc-blue-500);
+  box-shadow: 0 0 0 1px var(--ofc-blue-300);
+}
+.agenda-form__row--checkbox {
+  grid-template-columns: 110px 1fr;
+}
+.agenda-form__time-pair {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.agenda-form__color-picker {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.agenda-form__color-swatch {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+}
+.agenda-form__color-swatch:hover { transform: scale(1.1); }
+.agenda-form__color-swatch[aria-selected="true"] {
+  border-color: var(--ofc-blue-900);
+  box-shadow: 0 0 0 2px var(--ofc-blue-300);
+}
+.agenda-form__color-swatch[aria-selected="true"]::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.agenda-form__actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
+}
+
+/* =============================================================
+   THEME OVERRIDES — Bloomberg Pro
+   ============================================================= */
+[data-theme="bloomberg"] .agenda { background: #232323; }
+[data-theme="bloomberg"] .agenda__toolbar {
+  background: linear-gradient(180deg, #353535 0%, #2a2a2a 100%);
+  border-bottom: 1px solid #4a4a4a;
+}
+[data-theme="bloomberg"] .agenda__title { color: #e8c084; text-shadow: 0 1px 0 rgba(0,0,0,0.4); }
+[data-theme="bloomberg"] .agenda__viewswitch { border-color: #4a4a4a; }
+[data-theme="bloomberg"] .agenda__viewswitch button {
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+  color: #e8e8e8;
+  border-right-color: #3a3a3a;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+}
+[data-theme="bloomberg"] .agenda__viewswitch button:hover {
+  background: linear-gradient(180deg, #4a3a20 0%, #3a2a18 100%);
+}
+[data-theme="bloomberg"] .agenda__viewswitch button[aria-selected="true"] {
+  background: linear-gradient(180deg, #d4a76a 0%, #b8761a 100%);
+  color: #1a1a1a;
+}
+[data-theme="bloomberg"] .agenda__search {
+  background: #1a1a1a;
+  border-color: #5a4520;
+}
+[data-theme="bloomberg"] .agenda__search input { color: #e8e8e8; }
+[data-theme="bloomberg"] .agenda__search input::placeholder { color: #777; }
+
+[data-theme="bloomberg"] .agenda__month { background: #1f1f1f; }
+[data-theme="bloomberg"] .agenda__weekdays {
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+  border-bottom-color: #5a4520;
+}
+[data-theme="bloomberg"] .agenda__weekdays div {
+  color: #e8c084;
+  border-right-color: #4a4a4a;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+}
+[data-theme="bloomberg"] .agenda__weekdays div:nth-child(7) { color: #d68480; }
+
+[data-theme="bloomberg"] .agenda__day {
+  background: #1f1f1f;
+  border-right-color: #2a2a2a;
+  border-bottom-color: #2a2a2a;
+}
+[data-theme="bloomberg"] .agenda__day:hover { background: #2a2014; }
+[data-theme="bloomberg"] .agenda__day--other { background: #1a1a1a; }
+[data-theme="bloomberg"] .agenda__day--weekend { background: #1c1c1c; }
+[data-theme="bloomberg"] .agenda__day--today {
+  background: linear-gradient(180deg, #3a2c1c 0%, #2a2014 100%);
+  box-shadow: inset 0 0 0 2px #d4a76a;
+}
+[data-theme="bloomberg"] .agenda__day--today .agenda__day-num {
+  background: #d4a76a;
+  color: #1a1a1a;
+}
+[data-theme="bloomberg"] .agenda__day-num { color: #e8e8e8; }
+[data-theme="bloomberg"] .agenda__day--other .agenda__day-num { color: #555; }
+[data-theme="bloomberg"] .agenda__day--selected { outline-color: #d4a76a; }
+
+[data-theme="bloomberg"] .agenda__chip--default,
+[data-theme="bloomberg"] .agenda__chip--info {
+  background: #14202a; color: #8aaad0; border-color: #2a4a6b; border-left-color: #6b8aa6;
+}
+[data-theme="bloomberg"] .agenda__chip--success {
+  background: #1f2a14; color: #b8d480; border-color: #4a6b28; border-left-color: #7aa84e;
+}
+[data-theme="bloomberg"] .agenda__chip--warning {
+  background: #2a2014; color: #d4b06b; border-color: #6b4a20; border-left-color: #c9a464;
+}
+[data-theme="bloomberg"] .agenda__chip--danger {
+  background: #2a1414; color: #d68480; border-color: #6b2828; border-left-color: #b85450;
+}
+[data-theme="bloomberg"] .agenda__chip--purple {
+  background: #201a2a; color: #b8a0d4; border-color: #4a3a6b; border-left-color: #8a6fb0;
+}
+[data-theme="bloomberg"] .agenda__chip--teal {
+  background: #142a28; color: #8acec5; border-color: #2a6b6b; border-left-color: #4a8a8a;
+}
+
+[data-theme="bloomberg"] .agenda__list { background: #1f1f1f; }
+[data-theme="bloomberg"] .agenda__list-day { border-bottom-color: #2a2a2a; }
+[data-theme="bloomberg"] .agenda__list-day-header {
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+  color: #e8c084;
+  border-bottom-color: #5a4520;
+}
+[data-theme="bloomberg"] .agenda__list-day-header.is-today {
+  background: linear-gradient(180deg, #3a2c1c 0%, #2a2014 100%);
+  border-bottom-color: #d4a76a;
+}
+[data-theme="bloomberg"] .agenda__list-event { border-bottom-color: #2a2a2a; }
+[data-theme="bloomberg"] .agenda__list-event:hover { background: #2a2014; }
+[data-theme="bloomberg"] .agenda__list-event[aria-selected="true"] {
+  background: #3a2c1c;
+  outline-color: #d4a76a;
+}
+[data-theme="bloomberg"] .agenda__list-event-time { color: #a0a0a0; }
+[data-theme="bloomberg"] .agenda__list-event-title { color: #e8e8e8; }
+[data-theme="bloomberg"] .agenda__list-event-note { color: #888; }
+[data-theme="bloomberg"] .agenda__status {
+  background: linear-gradient(180deg, #2e2e2e 0%, #232323 100%);
+  border-top-color: #4a4a4a;
+  color: #a0a0a0;
+}
+[data-theme="bloomberg"] .agenda__status strong { color: #e8c084; }
+
+/* =============================================================
+   THEME OVERRIDES — Slate Operational
+   ============================================================= */
+[data-theme="slate"] .agenda { background: #fdfdfe; }
+[data-theme="slate"] .agenda__toolbar {
+  background: linear-gradient(180deg, #eaf1f4 0%, #c8d8de 100%);
+  border-bottom: 1px solid #6b8a92;
+}
+[data-theme="slate"] .agenda__title { color: #1b4332; }
+[data-theme="slate"] .agenda__viewswitch button[aria-selected="true"] {
+  background: linear-gradient(180deg, #52b788 0%, #2d6a4f 100%);
+  color: #fff;
+}
+[data-theme="slate"] .agenda__weekdays {
+  background: linear-gradient(180deg, #d8e6e9 0%, #b8cdd2 100%);
+  border-bottom-color: #6b8a92;
+}
+[data-theme="slate"] .agenda__weekdays div { color: #1b4332; }
+[data-theme="slate"] .agenda__day--today {
+  background: linear-gradient(180deg, #d8f3dc 0%, #b8e4c2 100%);
+  box-shadow: inset 0 0 0 2px #2d6a4f;
+}
+[data-theme="slate"] .agenda__day--today .agenda__day-num {
+  background: #2d6a4f;
+  color: #fff;
+}
+[data-theme="slate"] .agenda__list-day-header {
+  background: linear-gradient(180deg, #eaf1f4 0%, #c8d8de 100%);
+  color: #1b4332;
+}
+[data-theme="slate"] .agenda__chip--success {
+  background: #d8f3dc; color: #1b4332; border-color: #95d5b2; border-left-color: #2d6a4f;
+}

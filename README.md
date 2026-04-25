@@ -50,6 +50,34 @@ F5/F11/F12 NO se interceptan (browser reload/fullscreen/devtools).
 ### 3. Componentes reusables (`styles/components.css`)
 Patrones listos para cualquier ERP/POS/admin: KPI cards, dashboard panels, formularios densos, items-table editable con aprobación por checkbox, timeline horizontal de estados, summary box, side panel deslizante con backdrop, inner tabs, notes informativas, cashbox layout, config layout sidebar+main, receipt preview (ticket + A4), estados extendidos para workflows (pendiente/proceso/terminada/facturada/cobrada/anulada/abierta/cerrada/enviado/aprob-parc/...).
 
+### 4. Componente Agenda (`window.NodoComponents.Agenda`)
+Calendario/agenda estilo Google Calendar listo para usar:
+- **Vista Mes** (grilla 7×N con eventos como chips) y **Vista Agenda** (lista cronológica agrupada por día)
+- Eventos con título, fecha, hora opcional (o "todo el día"), nota, color (6 colores) y estado (pendiente/proceso/hecho/cancelado)
+- **Crear/editar/eliminar** vía side panel del shell (reutiliza el patrón existente)
+- **Atajos completos:** `↑↓←→` navegan días, `Enter` abre, `N` nuevo, `T` hoy, `M`/`A` cambia vista, `PgUp`/`PgDn` mes anterior/siguiente
+- **Tema-aware** (Office Blue / Bloomberg Pro / Slate)
+- **Storage configurable:** por defecto `localStorage`, cualquier cliente puede inyectar `loader`/`saver` async para conectar con su backend
+
+```js
+// Cualquier proyecto cliente registra su agenda así:
+window.MODULOS.miAgenda = function (container) {
+  window.NodoComponents.Agenda.mount(container, {
+    storageKey: "miApp.agenda",
+    loader: async () => myBackend.fetchEvents(),
+    saver:  async (events) => myBackend.saveEvents(events),
+    onChange: (events) => console.log("hay", events.length, "eventos"),
+    initialView: "month",
+    initialEvents: [
+      { id: 1, fecha: "2026-04-25", horaInicio: "09:00", horaFin: "10:00",
+        titulo: "Reunión", color: "info", estado: "pendiente" },
+      { id: 2, fecha: "2026-04-25", todoElDia: true,
+        titulo: "Vencimiento IVA", color: "warning" }
+    ]
+  });
+};
+```
+
 ### 4. PWA + Cloudflare Pages
 - Manifest, service worker (cache offline), `_headers` con cache rules
 - Auto-deploy en cada push a `main`
@@ -93,14 +121,16 @@ nodo-shell/
     │   ├── grid.css             grilla densa tipo XtraGrid (reusable)
     │   ├── components.css       KPIs, forms, items-table, side panel,
     │   │                        timeline, summary, notes, etc (reusable)
+    │   ├── components-agenda.css   componente NodoAgenda (vista mes + lista)
     │   ├── themes.css           sistema de temas (Office Blue/Bloomberg/Slate)
     │   └── keyboard.css         focus visible, badges F#, overlay F1
     ├── js/
     │   ├── app.js               shell controller, atajos, registro SW
     │   ├── theme.js             theme switcher con dropdown en QAT
     │   ├── keyboard-nav.js      F-keys + flechas grilla + Ctrl combos
+    │   ├── components-agenda.js NodoComponents.Agenda (calendario reusable)
     │   ├── mock-data.js         datos PY de ejemplo
-    │   └── modulos.js           registry de módulos (clientes, productos, ...)
+    │   └── modulos.js           registry de módulos (clientes, productos, agenda...)
     ├── assets/
     │   └── icons/icon.svg       icono SVG NODO (favicon + PWA + maskable)
     └── modulos/                 mockups por módulo (a demanda)

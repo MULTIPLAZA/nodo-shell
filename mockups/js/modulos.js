@@ -265,3 +265,47 @@ window.MODULOS.clientes = function (container) {
   // Render inicial
   renderBody();
 };
+
+
+/* ============================================================
+   MÓDULO: Agenda (demo del componente NodoComponents.Agenda)
+   ============================================================
+   Cualquier proyecto cliente puede registrar su agenda así:
+
+     window.MODULOS.miAgenda = function (container) {
+       window.NodoComponents.Agenda.mount(container, {
+         storageKey: "miApp.agenda",
+         loader: async () => myBackend.fetchEvents(),
+         saver:  async (events) => myBackend.saveEvents(events),
+         initialEvents: [...]
+       });
+     };
+   ============================================================ */
+window.MODULOS.agenda = function (container) {
+  // Mock data inicial — solo si localStorage está vacío
+  const today = new Date();
+  function ymd(d) {
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+  function add(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+
+  const initialEvents = [
+    { id: "ev-demo-1", fecha: ymd(today),         horaInicio: "09:00", horaFin: "10:00", titulo: "Reunión con cliente",        nota: "Revisar avance del proyecto", color: "info",    estado: "pendiente" },
+    { id: "ev-demo-2", fecha: ymd(today),         todoElDia: true,     titulo: "Vencimiento IVA mensual",     nota: "Presentar antes de las 18:00", color: "warning", estado: "pendiente" },
+    { id: "ev-demo-3", fecha: ymd(add(today,1)),  horaInicio: "14:30", horaFin: "15:00", titulo: "Llamar a proveedor Bosch",   color: "default", estado: "pendiente" },
+    { id: "ev-demo-4", fecha: ymd(add(today,2)),  horaInicio: "11:00", titulo: "Entrega de mercadería",       nota: "Local 3 — pedido #4521", color: "success", estado: "pendiente" },
+    { id: "ev-demo-5", fecha: ymd(add(today,3)),  todoElDia: true,     titulo: "Capacitación equipo",         color: "purple",  estado: "pendiente" },
+    { id: "ev-demo-6", fecha: ymd(add(today,7)),  horaInicio: "16:00", titulo: "Cierre de mes",                color: "danger",  estado: "pendiente" },
+    { id: "ev-demo-7", fecha: ymd(add(today,-2)), horaInicio: "10:00", horaFin: "11:30", titulo: "Reunión semanal equipo",     color: "teal",    estado: "hecho" },
+    { id: "ev-demo-8", fecha: ymd(add(today,-1)), todoElDia: true,     titulo: "Pagar servicios",              color: "warning", estado: "hecho" },
+    { id: "ev-demo-9", fecha: ymd(add(today,5)),  horaInicio: "08:30", horaFin: "09:30", titulo: "Desayuno con socio",         nota: "Café Martínez", color: "default", estado: "pendiente" },
+    { id: "ev-demo-10", fecha: ymd(add(today,10)), todoElDia: true,    titulo: "Feriado provincial",           color: "danger",  estado: "pendiente" }
+  ];
+
+  window.NodoComponents.Agenda.mount(container, {
+    storageKey: "nodo-shell-demo.agenda",
+    initialEvents,
+    initialView: "month"
+  });
+};

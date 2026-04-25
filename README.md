@@ -18,6 +18,42 @@ Plataforma base para sistemas administrativos web — estilo **Office Ribbon**, 
 - **Densidad alta** (labels 11-12px, filas grilla 26-28px)
 - **Atajos de teclado** del desktop respetados (Alt+letra, Esc, Ctrl+Tab)
 
+## Superpoderes incluidos en el template
+
+Todo proyecto que arranca clonando este shell hereda automáticamente:
+
+### 1. Sistema de temas (3 temas listos, fácil sumar más)
+- **Office 2010 Blue** (default) — clásico Microsoft
+- **Bloomberg Pro** — charcoal + dorado/cobre apagado, mismos gradientes
+- **Slate Operational** — verde pizarra + gris frío, ideal logística/stock
+
+Switcher en el QAT, persistencia en `localStorage`, anti-flash al cargar.
+
+**Sumar tema nuevo:**
+1. Bloque `[data-theme="miid"] { ... }` en `mockups/styles/themes.css` (override de variables + parches a gradientes hardcodeados)
+2. Entry en el array `THEMES` de `mockups/js/theme.js` (`{ id, label, hint, swatch, dot }`)
+
+### 2. Operación 100% por teclado
+- **F1** → overlay de ayuda con TODOS los atajos (autodescubre las F-keys del DOM)
+- **F2..F10** → módulos del cliente (vía `data-fkey="F2"` en el DOM, **agnóstico al shell**)
+- **↑ ↓ Home End PgUp PgDn Enter** → navegan la grilla activa
+- **Ctrl+F/N/E/S/P** y **Supr** → acciones del módulo activo (vía `data-act="..."`)
+- **Tab** con `:focus-visible` reforzado (anillo del color del tema)
+
+**Cablear F-key en un proyecto cliente** — solo agregar atributo en el HTML:
+```html
+<button data-open="dashboard" data-title="Tablero" data-fkey="F2">…</button>
+<button data-open="clientes" data-title="Clientes" data-fkey="F3" data-fkey-focus-search="true">…</button>
+```
+F5/F11/F12 NO se interceptan (browser reload/fullscreen/devtools).
+
+### 3. Componentes reusables (`styles/components.css`)
+Patrones listos para cualquier ERP/POS/admin: KPI cards, dashboard panels, formularios densos, items-table editable con aprobación por checkbox, timeline horizontal de estados, summary box, side panel deslizante con backdrop, inner tabs, notes informativas, cashbox layout, config layout sidebar+main, receipt preview (ticket + A4), estados extendidos para workflows (pendiente/proceso/terminada/facturada/cobrada/anulada/abierta/cerrada/enviado/aprob-parc/...).
+
+### 4. PWA + Cloudflare Pages
+- Manifest, service worker (cache offline), `_headers` con cache rules
+- Auto-deploy en cada push a `main`
+
 ## Cómo correr local
 
 ### Opción 1 — Doble click
@@ -54,9 +90,15 @@ nodo-shell/
     │   ├── ribbon.css           ribbon: tabs + grupos + botones
     │   ├── workspace.css        MDI emulado con tabs cerrables
     │   ├── patterns.css         botones, badges, placeholders
-    │   └── grid.css             grilla densa tipo XtraGrid (reusable)
+    │   ├── grid.css             grilla densa tipo XtraGrid (reusable)
+    │   ├── components.css       KPIs, forms, items-table, side panel,
+    │   │                        timeline, summary, notes, etc (reusable)
+    │   ├── themes.css           sistema de temas (Office Blue/Bloomberg/Slate)
+    │   └── keyboard.css         focus visible, badges F#, overlay F1
     ├── js/
     │   ├── app.js               shell controller, atajos, registro SW
+    │   ├── theme.js             theme switcher con dropdown en QAT
+    │   ├── keyboard-nav.js      F-keys + flechas grilla + Ctrl combos
     │   ├── mock-data.js         datos PY de ejemplo
     │   └── modulos.js           registry de módulos (clientes, productos, ...)
     ├── assets/
@@ -82,13 +124,43 @@ Auto-deploy en cada `git push origin main`.
 
 | Atajo | Acción |
 |---|---|
+| `F1` | Overlay de ayuda con TODOS los atajos disponibles |
+| `F2..F10` | Abrir módulos (cada cliente lo cablea con `data-fkey="F2"` en el ribbon) |
+| `↑ ↓` | Fila anterior / siguiente en la grilla activa |
+| `Home / End` | Primera / última fila |
+| `PgUp / PgDn` | ±10 filas |
+| `Enter` o `Espacio` | Abrir detalle (= doble click en la fila) |
+| `Supr` | Eliminar / Anular el seleccionado |
+| `Ctrl+F` | Foco en el buscador del módulo activo |
+| `Ctrl+N` | Nuevo registro |
+| `Ctrl+E` | Editar seleccionado |
+| `Ctrl+S` | Guardar |
+| `Ctrl+P` | Imprimir |
+| `Tab` / `Shift+Tab` | Navegar foco entre controles (con anillo visible) |
 | `Alt` (mantener) | Resalta letras de acceso en tabs del ribbon |
-| `Alt+I` | Tab INICIO |
-| `Alt+V` | Tab INVENTARIO |
-| `Alt+C` | Tab CLIENTES |
-| `Alt+P/O/T/B/S/H/R` | Resto de tabs |
-| `Esc` | Cerrar tab activo del workspace |
-| `Ctrl+Tab` / `Ctrl+Shift+Tab` | Cambiar entre tabs abiertos |
+| `Alt+I/V/C/P/O/T/B/S/H/R` | Cambiar tab del ribbon (la letra subrayada) |
+| `Esc` | Cerrar overlay → side panel → tab activo del workspace |
+| `Ctrl+Tab` / `Ctrl+Shift+Tab` | Cambiar entre tabs abiertos del MDI |
+
+## Cómo arrancar un proyecto a medida nuevo
+
+1. **Clonar este repo** a una carpeta nueva del cliente, ej: `proyectos-medida/cliente-x/sistema/`
+2. **Personalizar `mockups/index.html`:**
+   - Titlebar: nombre del cliente + RUC + sucursal
+   - Ribbon: definir tus tabs y botones (`data-open="miModulo"` + `data-fkey="F2"`)
+   - Status bar: usuario, terminal, datos contextuales
+3. **Crear módulos** en `mockups/js/modulos-*.js` y registrarlos en `window.MODULOS`
+4. **(Opcional) Override del `STORAGE_KEY` del tema** para que no comparta preferencia con otros sistemas:
+   ```html
+   <script>window.NODO_SHELL_CONFIG = { themeStorageKey: "cliente-x.theme" };</script>
+   ```
+5. **(Opcional) Hints de F-keys** para el overlay de ayuda:
+   ```js
+   window.NODO_SHELL_CONFIG = { fkeyHints: { F2: "Tablero del día", F3: "Clientes" } };
+   ```
+6. Listo — tu sistema hereda los 3 temas, navegación por teclado, side panel, componentes, PWA, deploy.
+
+**Caso real:** ver `Documents/proyectos-medida/taller-autos/sistema-mockup/` (Sistema Taller Jordan, 13 módulos completos sobre este shell).
 
 ## Roadmap
 

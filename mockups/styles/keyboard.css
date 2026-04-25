@@ -1,0 +1,285 @@
+/* ============================================================
+   Keyboard navigation — estilos
+   - :focus-visible reforzado para todos los controles
+   - Fila seleccionada en grilla con indicador más visible
+   - Badges F# en botones del ribbon
+   - Overlay de ayuda
+   ============================================================ */
+
+/* ============================================================
+   Focus visible — anillo claro y consistente con el tema
+   ============================================================ */
+:focus { outline: none; }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--ofc-blue-700);
+  outline-offset: 1px;
+  z-index: 5;
+  position: relative;
+}
+
+.ribbon-tab:focus-visible,
+.ws-tab:focus-visible {
+  outline: 2px solid var(--ofc-blue-700);
+  outline-offset: -2px;
+}
+
+.ribbon-file:focus-visible,
+.titlebar__btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -3px;
+}
+
+.tb-btn:focus-visible,
+.btn:focus-visible,
+.qat__btn:focus-visible,
+.rb-btn-lg:focus-visible,
+.rb-btn-sm:focus-visible,
+.config-nav__item:focus-visible,
+.inner-tab:focus-visible {
+  outline: 2px solid var(--ofc-blue-700);
+  outline-offset: 1px;
+}
+
+/* ============================================================
+   Grid: fila seleccionada con indicador de "foco de teclado"
+   ============================================================ */
+.grid tbody tr.is-selected td {
+  position: relative;
+}
+.grid tbody tr.is-selected td:first-child::before {
+  content: "▸";
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ofc-blue-900);
+  font-weight: bold;
+  font-size: 11px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Cuando el body tiene foco activo de teclado, refuerza el border de fila */
+body.kbd-active .grid tbody tr.is-selected td {
+  box-shadow: 0 1px 0 var(--ofc-blue-700) inset, 0 -1px 0 var(--ofc-blue-700) inset;
+}
+
+/* ============================================================
+   Badges F# en los botones del ribbon (data-fkey="F2")
+   ============================================================ */
+.rb-btn-lg[data-fkey],
+.rb-btn-sm[data-fkey] {
+  position: relative;
+}
+.rb-btn-lg[data-fkey]::after {
+  content: attr(data-fkey);
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  background: var(--ofc-blue-700);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: "Consolas", monospace;
+  padding: 0 3px;
+  border-radius: 2px;
+  line-height: 12px;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  text-shadow: none;
+  z-index: 2;
+}
+.rb-btn-sm[data-fkey]::after {
+  content: attr(data-fkey);
+  margin-left: auto;
+  background: var(--sil-200);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  font-family: "Consolas", monospace;
+  padding: 0 4px;
+  border-radius: 2px;
+  line-height: 13px;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--border);
+}
+
+/* Override por tema del badge F# */
+[data-theme="bloomberg"] .rb-btn-lg[data-fkey]::after {
+  background: #d4a76a;
+  color: #1a1a1a;
+}
+[data-theme="bloomberg"] .rb-btn-sm[data-fkey]::after {
+  background: #2a2a2a;
+  color: #d4a76a;
+  border-color: #5a4520;
+}
+[data-theme="slate"] .rb-btn-lg[data-fkey]::after {
+  background: #2d6a4f;
+  color: #fff;
+}
+[data-theme="slate"] .rb-btn-sm[data-fkey]::after {
+  background: #eaf1f4;
+  color: #2d6a4f;
+  border-color: #c8d8de;
+}
+
+/* ============================================================
+   Overlay de ayuda (F1)
+   ============================================================ */
+.kbd-help {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: kbd-help-fade 120ms ease;
+}
+.kbd-help.is-open { display: flex; }
+
+@keyframes kbd-help-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.kbd-help__panel {
+  background: var(--bg-ribbon, #fdfdfe);
+  border: 2px solid var(--ofc-blue-700);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 880px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  font-family: var(--font-ui);
+  color: var(--text);
+  overflow: hidden;
+}
+.kbd-help__panel header {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, var(--ofc-blue-500) 0%, var(--ofc-blue-700) 100%);
+  color: #fff;
+  border-bottom: 1px solid var(--ofc-blue-900);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+}
+.kbd-help__panel header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  flex: 1;
+}
+.kbd-help__close {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  width: 28px;
+  height: 24px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+}
+.kbd-help__close:hover { background: rgba(255,255,255,0.15); }
+
+.kbd-help__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 16px;
+  overflow: auto;
+  background: var(--bg-app, #f0f3f7);
+}
+.kbd-help__body section {
+  background: var(--bg-ribbon, #fff);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 12px;
+}
+.kbd-help__body h3 {
+  margin: 0 0 8px;
+  color: var(--ofc-blue-900);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.kbd-help__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.kbd-help__table td {
+  padding: 4px 4px;
+  vertical-align: middle;
+  color: var(--text);
+}
+.kbd-help__table td:first-child {
+  white-space: nowrap;
+  width: 1%;
+  padding-right: 12px;
+}
+.kbd-help__table tr + tr td { border-top: 1px dashed var(--border); }
+
+.kbd-help kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  background: linear-gradient(180deg, #fff 0%, var(--sil-150) 100%);
+  border: 1px solid var(--sil-500);
+  border-radius: 3px;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: 0 1px 0 var(--sil-500), inset 0 -1px 0 var(--sil-200);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.kbd-help__panel footer {
+  padding: 8px 16px;
+  background: linear-gradient(180deg, var(--sil-150) 0%, var(--sil-200) 100%);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Dark themes adaptations */
+[data-theme="bloomberg"] .kbd-help { background: rgba(0,0,0,0.7); }
+[data-theme="bloomberg"] .kbd-help__panel {
+  background: #232323;
+  border-color: #b8761a;
+}
+[data-theme="bloomberg"] .kbd-help__body { background: #1a1a1a; }
+[data-theme="bloomberg"] .kbd-help__body section {
+  background: #262626;
+  border-color: #3a3a3a;
+}
+[data-theme="bloomberg"] .kbd-help kbd {
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+  border-color: #5a4520;
+  color: #e8c084;
+  box-shadow: 0 1px 0 #4a3520, inset 0 -1px 0 #1a1a1a;
+}
+[data-theme="bloomberg"] .kbd-help__panel footer {
+  background: #1a1a1a;
+  border-color: #3a3a3a;
+}

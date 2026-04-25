@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NODO Shell — Manual y Modelo de Negocio v1.0</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #424242;
+    --ink-mute: #6b6b6b;
+    --accent: #0f4c81;
+    --accent-soft: #e6eef7;
+    --accent-warn: #8b3a1f;
+    --rule: #d9d2c5;
+    --rule-soft: #ecebe5;
+    --paper: #faf8f3;
+    --paper-card: #ffffff;
+    --paper-shade: #f2ede0;
+    --green: #2d6a4f;
+    --red: #9d2933;
+    --yellow: #b8860b;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', 'Palatino', serif;
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layout */
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 60px 32px 120px;
+  }
+
+  /* Cover */
+  header.cover {
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 36px;
+    margin-bottom: 50px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .badge {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+  .badge.muted { background: var(--ink-mute); }
+  .badge.warn { background: var(--accent-warn); }
+
+  h1 {
+    font-size: 44px;
+    line-height: 1.1;
+    font-weight: 700;
+    margin: 0 0 14px;
+    letter-spacing: -0.015em;
+  }
+
+  .cover-subtitle {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 21px;
+    line-height: 1.4;
+    margin: 0 0 24px;
+  }
+
+  .cover-meta {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    color: var(--ink-mute);
+    line-height: 1.7;
+  }
+  .cover-meta strong { color: var(--ink); font-weight: 600; }
+
+  /* TOC */
+  .toc {
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    padding: 22px 28px;
+    margin: 40px 0 50px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .toc h2 {
+    font-family: 'Georgia', serif;
+    font-size: 14px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .toc h2::before { content: ""; }
+  .toc ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    columns: 2;
+    column-gap: 32px;
+    font-size: 14px;
+  }
+  .toc ol li {
+    margin-bottom: 6px;
+    break-inside: avoid;
+  }
+  .toc a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px dotted transparent;
+  }
+  .toc a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .toc .toc-sep {
+    color: var(--ink-mute);
+    margin: 12px 0 6px;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    break-inside: avoid;
+  }
+
+  /* Headings */
+  h2 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin: 60px 0 16px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    border-top: 1px solid var(--rule);
+    padding-top: 36px;
+  }
+  h2.no-rule { border-top: none; padding-top: 0; }
+  h2::before {
+    content: attr(data-num);
+    color: var(--accent);
+    font-weight: 400;
+    font-size: 22px;
+    margin-right: 14px;
+    display: inline-block;
+    min-width: 48px;
+  }
+
+  h3 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 36px 0 10px;
+    color: var(--ink);
+  }
+
+  h4 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 24px 0 8px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Body */
+  p {
+    margin: 0 0 16px;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  p.lead {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  strong { font-weight: 700; color: var(--ink); }
+  em { font-style: italic; }
+
+  ul, ol {
+    padding-left: 24px;
+    margin: 0 0 22px;
+  }
+  li { margin-bottom: 8px; }
+  ol > li::marker { font-weight: 700; color: var(--accent); }
+
+  blockquote {
+    border-left: 4px solid var(--accent);
+    margin: 28px 0;
+    padding: 6px 0 6px 24px;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 19px;
+    line-height: 1.5;
+  }
+
+  /* Special boxes */
+  .exec-summary {
+    background: var(--accent-soft);
+    border-left: 5px solid var(--accent);
+    padding: 28px 32px;
+    margin: 0 0 50px;
+  }
+  .exec-summary h3 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    border: none;
+  }
+  .exec-summary p { font-size: 15.5px; }
+  .exec-summary p:last-child { margin-bottom: 0; }
+
+  .definition {
+    background: var(--paper-shade);
+    border: 1px solid var(--rule);
+    padding: 24px 28px;
+    margin: 30px 0;
+    border-radius: 3px;
+  }
+  .definition h4 {
+    margin-top: 0;
+    color: var(--accent-warn);
+  }
+
+  .market-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 30px 0;
+    border: 1px solid var(--rule);
+  }
+  .market-box > div {
+    padding: 24px 28px;
+  }
+  .market-box .yes {
+    background: #f0f7f1;
+    border-right: 1px solid var(--rule);
+  }
+  .market-box .no { background: #fbf3f3; }
+  .market-box h4 {
+    margin: 0 0 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 13px;
+  }
+  .market-box .yes h4 { color: var(--green); }
+  .market-box .no h4 { color: var(--red); }
+  .market-box ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 15px;
+  }
+  .market-box li { margin-bottom: 6px; }
+
+  .principle {
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    padding: 18px 24px;
+    margin: 14px 0;
+    border-left: 4px solid var(--accent);
+  }
+  .principle h4 {
+    margin: 0 0 6px;
+    color: var(--accent);
+    font-size: 15px;
+  }
+  .principle p { margin: 0; font-size: 15.5px; }
+
+  .rule-card {
+    background: linear-gradient(180deg, var(--paper-card) 0%, var(--paper-shade) 100%);
+    border: 2px solid var(--accent);
+    padding: 26px 30px;
+    margin: 22px 0;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .rule-card .rule-num {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .rule-card h3 {
+    margin: 0 0 12px;
+    font-size: 22px;
+  }
+  .rule-card p { margin: 0; font-size: 16px; }
+
+  .decision-card {
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    padding: 22px 26px;
+    margin: 18px 0;
+    border-left: 4px solid var(--yellow);
+  }
+  .decision-card h3 {
+    margin-top: 0;
+    color: var(--yellow);
+    font-size: 18px;
+  }
+
+  .callout {
+    background: var(--paper-shade);
+    border-left: 4px solid var(--accent-warn);
+    padding: 20px 26px;
+    margin: 28px 0;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout strong { color: var(--accent-warn); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+  }
+  th {
+    background: var(--accent);
+    color: white;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--paper); }
+  tr:hover td { background: var(--accent-soft); }
+
+  /* Code/pre for ASCII art */
+  pre {
+    background: #1a1a1a;
+    color: #d4d4d4;
+    padding: 22px 26px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    border-radius: 3px;
+    margin: 24px 0;
+  }
+
+  /* Hr */
+  hr.section-break {
+    border: none;
+    text-align: center;
+    margin: 60px 0 40px;
+    color: var(--accent);
+    font-size: 18px;
+    letter-spacing: 1em;
+  }
+  hr.section-break::before { content: "§ § §"; }
+
+  /* Part header */
+  .part-header {
+    text-align: center;
+    margin: 80px 0 40px;
+    padding: 30px 0;
+    border-top: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+  }
+  .part-header .part-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .part-header h2 {
+    margin: 0;
+    border: none;
+    padding: 0;
+    font-size: 32px;
+  }
+  .part-header h2::before { content: ""; margin: 0; }
+
+  /* Footer */
+  footer.signature {
+    margin-top: 80px;
+    padding: 40px 30px;
+    border-top: 2px solid var(--accent);
+    background: var(--paper-shade);
+    text-align: center;
+  }
+  .signature-block {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .signature-line {
+    border-top: 1px solid var(--ink);
+    width: 220px;
+    padding-top: 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .signature-line strong { display: block; margin-bottom: 4px; color: var(--ink); }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    body { font-size: 16px; }
+    .page { padding: 40px 20px 80px; }
+    h1 { font-size: 32px; }
+    h2 { font-size: 22px; }
+    .toc ol { columns: 1; }
+    .market-box { grid-template-columns: 1fr; }
+    .market-box .yes { border-right: none; border-bottom: 1px solid var(--rule); }
+    .signature-block { flex-direction: column; gap: 30px; }
+    table { font-size: 12.5px; }
+    th, td { padding: 8px 10px; }
+  }
+
+  @media print {
+    body { background: white; color: black; font-size: 11pt; }
+    .page { max-width: none; padding: 0; }
+    h2 { page-break-after: avoid; }
+    .rule-card, .principle, .decision-card { page-break-inside: avoid; }
+    pre { color: #1a1a1a; background: #f5f5f5; }
+    .toc { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ============= COVER ============= -->
+<header class="cover">
+  <div class="badges">
+    <span class="badge">Documento estratégico</span>
+    <span class="badge muted">Versión 1.0 — Abril 2026</span>
+    <span class="badge warn">Documento vivo</span>
+  </div>
+  <h1>NODO Shell</h1>
+  <p class="cover-subtitle">Manual fundacional y Modelo de Negocio. La brújula interna que define qué construimos, qué no construimos, y cómo lo monetizamos.</p>
+  <div class="cover-meta">
+    <strong>Autores:</strong> Emiliano Vitale + Carlos Cardozo Pintos<br>
+    <strong>Empresa:</strong> NODO — Software paraguayo de gestión empresarial<br>
+    <strong>Estado:</strong> Documento vivo — actualizar cuando cambien decisiones estructurales<br>
+    <strong>Próxima revisión:</strong> Octubre 2026
+  </div>
+</header>
+
+<!-- ============= TOC ============= -->
+<nav class="toc">
+  <h2>Índice del documento</h2>
+  <ol>
+    <li class="toc-sep">Apertura</li>
+    <li><a href="#exec">Resumen ejecutivo</a></li>
+    <li><a href="#shell-def">¿Qué es un "shell"?</a></li>
+    <li><a href="#mercado">Mercado objetivo y exclusiones</a></li>
+
+    <li class="toc-sep">Parte I — Manifiesto</li>
+    <li><a href="#que-es">Qué es NODO Shell</a></li>
+    <li><a href="#que-no-es">Qué NO es NODO Shell</a></li>
+    <li><a href="#principios">Los 7 principios fundacionales</a></li>
+    <li><a href="#arquitectura">Arquitectura conceptual</a></li>
+    <li><a href="#regla-vive">Regla de qué vive dónde</a></li>
+    <li><a href="#versionado">Reglas de versionado</a></li>
+    <li><a href="#identidad">Reglas de identidad visual</a></li>
+    <li><a href="#anti-fork">Disciplina anti-fork</a></li>
+
+    <li class="toc-sep">Parte II — Modelo de Negocio</li>
+    <li><a href="#canales">Las 3 fuentes de ingreso</a></li>
+    <li><a href="#pricing">Pricing tentativo</a></li>
+    <li><a href="#funnel">Funnel del cliente</a></li>
+    <li><a href="#roadmap">Roadmap por fases</a></li>
+    <li><a href="#kpis">KPIs a medir</a></li>
+
+    <li class="toc-sep">Parte III — Pendientes</li>
+    <li><a href="#decisiones">Decisiones a cerrar</a></li>
+
+    <li class="toc-sep">Parte IV — Compromiso</li>
+    <li><a href="#reglas-oro">Las 3 reglas de oro</a></li>
+
+    <li class="toc-sep">Anexos</li>
+    <li><a href="#anexo-a">A — Catálogo de verticales</a></li>
+    <li><a href="#anexo-b">B — Plantilla de evaluación</a></li>
+    <li><a href="#anexo-c">C — Glosario</a></li>
+  </ol>
+</nav>
+
+<!-- ============= EXEC SUMMARY ============= -->
+<section class="exec-summary" id="exec">
+  <h3>Resumen ejecutivo</h3>
+
+  <p><strong>Qué es NODO Shell.</strong> Una plataforma propietaria de aplicaciones de gestión empresarial, con identidad visual reconocible (ribbon Office 2010, MDI, densidad alta, atajos de teclado profesionales) y stack PWA moderno. NO es un producto. Es la <strong>infraestructura común</strong> sobre la cual NODO construye todos sus verticales: ERP de distribución, sistema odontológico, gestión de talleres, inmobiliaria, médico, financiero, etc.</p>
+
+  <p><strong>Mercado objetivo.</strong> Empresas medianas y profesionales con operación administrativa intensa: distribuidoras, importadoras, talleres técnicos, consultorios profesionales, inmobiliarias, cooperativas, financieras chicas, empresas de servicios. <strong>NO está dirigido a comercios pequeños tipo lomiterías, despensas o gastronomía de barrio</strong> — ese mercado tiene otro carril en NODO (línea POS gastronomía con su propio producto y posicionamiento). NODO Shell apunta a negocios donde el sistema se usa 6–10 horas al día por personal de oficina, multi-usuario, multi-sucursal, con flujos administrativos complejos.</p>
+
+  <p><strong>Por qué existe.</strong> Porque en la era IA el código tiende a costo cero, pero la <em>identidad de marca</em>, la <em>coherencia de UX</em>, la <em>densidad de uso profesional</em> y la <em>integración regulatoria local</em> (SIFEN) son activos no replicables por un agente. NODO Shell concentra esos activos en un solo lugar y los multiplica al servicio de cualquier vertical que NODO decida construir.</p>
+
+  <p><strong>Cómo se monetiza.</strong> No se vende el shell. Se venden <em>verticales construidos sobre el shell</em> vía suscripción mensual, y proyectos a medida ejecutados por la Fábrica de Software de NODO usando el shell como base. El cliente final nunca compra "el shell" — compra "su sistema". El shell es el activo invisible que hace que todo lo demás escale.</p>
+
+  <p><strong>El compromiso central.</strong> No forkear nunca. Una sola plataforma, muchas configuraciones, cero excepciones de código por cliente. Las customizaciones específicas viven como proyectos a medida cobrados aparte, no como adaptaciones del shell.</p>
+</section>
+
+<!-- ============= DEFINICIÓN DE SHELL ============= -->
+<section id="shell-def">
+  <h2 class="no-rule" data-num="§ 0">¿Qué es un "shell"? (definición fundacional)</h2>
+
+  <p class="lead">Antes de avanzar, hay que dejar claro qué significa "shell" en este documento, porque si esta palabra se entiende mal, todo el resto del manual se entiende mal.</p>
+
+  <div class="definition">
+    <h4>Shell aplicativo — definición</h4>
+    <p>En software, un <strong>shell aplicativo</strong> es la <strong>carcasa común</strong> sobre la cual se construyen aplicaciones específicas. No resuelve un problema de negocio por sí solo — provee la <em>infraestructura compartida</em> (layout visual, componentes UI, atajos de teclado, identidad de marca, sistema de permisos, integración con servicios externos, motor de actualización) que hace posible que sobre él vivan aplicaciones que sí resuelven problemas de negocio concretos.</p>
+  </div>
+
+  <h3>Tres analogías para entenderlo sin tecnicismos</h3>
+
+  <h4>Analogía 1 — El chasis del auto</h4>
+  <p>Una marca de autos no vende chasises. Vende autos. Pero internamente, el mismo chasis sirve para hacer un sedán, una camioneta, un deportivo. El chasis es la inversión estructural que multiplica todos los modelos. <strong>NODO Shell es ese chasis.</strong> NODO Distribución, NODO Odonto, NODO Taller son los autos que se construyen sobre él.</p>
+
+  <h4>Analogía 2 — El shopping center</h4>
+  <p>Un shopping no vende ropa, ni comida, ni electrónica. Pero provee la infraestructura común (estructura del edificio, luz, seguridad, marketing, accesos, baños, estacionamiento) que hace posible que dentro vivan locales que sí venden eso. Cada local es distinto, pero todos comparten lo común. <strong>NODO Shell es el shopping para sistemas de gestión empresarial.</strong> Los verticales son los locales.</p>
+
+  <h4>Analogía 3 — El sistema operativo</h4>
+  <p>Windows no es un programa. Es lo que hace posible que existan Word, Excel, Photoshop. Provee ventanas, menús, archivos, impresión, atajos de teclado. Cada programa hace algo distinto, pero todos hablan el mismo idioma visual y técnico. <strong>NODO Shell es ese sistema operativo de aplicaciones empresariales.</strong></p>
+
+  <p>En las tres analogías hay tres ideas que se repiten:</p>
+  <ol>
+    <li>El shell <strong>no se vende solo</strong> — se vende lo que se construye encima.</li>
+    <li>El shell <strong>multiplica la velocidad</strong> de construcción de cada nuevo producto.</li>
+    <li>El shell <strong>da identidad común</strong> a todo lo que vive sobre él.</li>
+  </ol>
+</section>
+
+<!-- ============= MERCADO OBJETIVO ============= -->
+<section id="mercado">
+  <h2 data-num="§ 1">Mercado objetivo y exclusiones explícitas</h2>
+
+  <p>NODO Shell apunta a un público muy específico. Esta sección define con precisión <strong>quién es nuestro cliente</strong> y, casi más importante, <strong>quién no lo es</strong>. Esta delimitación se respeta sin excepción.</p>
+
+  <div class="market-box">
+    <div class="yes">
+      <h4>SÍ apuntamos a</h4>
+      <ul>
+        <li>Distribuidoras e importadoras</li>
+        <li>Talleres técnicos (mecánicos, electrónicos, electrodomésticos)</li>
+        <li>Consultorios odontológicos profesionales</li>
+        <li>Consultorios médicos y clínicas chicas/medianas</li>
+        <li>Inmobiliarias y administradoras</li>
+        <li>Cooperativas y financieras chicas</li>
+        <li>Empresas de servicios profesionales</li>
+        <li>Negocios multi-sucursal con personal administrativo</li>
+        <li>Operaciones donde el sistema se usa 6–10 hs/día</li>
+      </ul>
+    </div>
+    <div class="no">
+      <h4>NO apuntamos a</h4>
+      <ul>
+        <li>Lomiterías, pizzerías, hamburgueserías</li>
+        <li>Despensas, kioscos, minisúper de barrio</li>
+        <li>Comercio gastronómico pequeño</li>
+        <li>Comercios sin operación administrativa compleja</li>
+        <li>Negocios mono-usuario con flujo simple</li>
+        <li>Clientes que necesitan solo "una caja" sin gestión</li>
+        <li>Mercado de TPV barato gastronomía</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>Aclaración crítica.</strong> NODO como empresa <em>sí</em> atiende al mercado de gastronomía pequeña — pero a través de otra <strong>línea de producto separada</strong> (POS Gastronomía / mi-pos / NODO POS legacy + agentes NodoConsultor + Ventas.Bot). Esa línea tiene su propio producto, marca, marketing, pricing y posicionamiento. <strong>No es un vertical de NODO Shell.</strong> Compartirán infraestructura técnica (sifen-engine para SIFEN, base de datos, agentes IA) pero son productos comercialmente independientes. Si un vertical NODO Shell eventualmente integra un TPV (ej: distribuidora con mostrador de venta), es como módulo interno, no como propuesta principal.</p>
+  </div>
+</section>
+
+<!-- ============= PARTE I ============= -->
+<div class="part-header">
+  <div class="part-label">Parte I</div>
+  <h2 data-num="">Manifiesto fundacional</h2>
+</div>
+
+<section id="que-es">
+  <h2 class="no-rule" data-num="§ 2">Qué es NODO Shell</h2>
+  <p>NODO Shell es:</p>
+  <ul>
+    <li><strong>Un shell aplicativo con identidad propia.</strong> Layout (titlebar, QAT, ribbon, MDI, status bar), atajos de teclado profesionales, theming, instalable como PWA, offline-ready.</li>
+    <li><strong>Un catálogo de componentes maduros.</strong> Grilla densa, formularios maestro-detalle, lookup, treeview, agenda, charts, side panels, wizards, report viewer, toast.</li>
+    <li><strong>Una opinión fuerte de UX.</strong> Desktop-first (1366×768 mínimo), densidad alta, navegación por teclado, comportamiento reconocible para usuarios provenientes de software empresarial desktop (Tango, Calipso, Bejerman, ERP Lite original).</li>
+    <li><strong>Una plataforma vertical-paraguaya.</strong> SIFEN integrado, tipos de impuestos PY, formularios fiscales locales, idioma español paraguayo, soporte humano local.</li>
+    <li><strong>El activo común detrás de todos los productos NODO.</strong> Cada vertical (Odonto, Taller, Distribución, etc.) consume el shell. El shell no consume a nadie.</li>
+  </ul>
+</section>
+
+<section id="que-no-es">
+  <h2 data-num="§ 3">Qué NO es NODO Shell</h2>
+  <p>NODO Shell no es:</p>
+  <ul>
+    <li><strong>No es un ERP.</strong> Aunque uno de sus verticales sea un ERP, el shell por sí mismo no resuelve negocio. Solo provee la infraestructura.</li>
+    <li><strong>No es un POS de gastronomía ni un sistema para comercios pequeños.</strong> Las lomiterías, pizzerías, despensas, kioscos y minisúper tienen otro carril dentro de NODO (línea POS Gastronomía, producto distinto, marca distinta, marketing distinto). Si un vertical NODO eventualmente integra un TPV (ej: distribuidora con mostrador de venta), es como módulo dentro del vertical, no como propuesta principal.</li>
+    <li><strong>No es un framework genérico tipo React/Angular.</strong> Es opinado, vertical, y no aspira a competir con frameworks horizontales globales.</li>
+    <li><strong>No es un low-code para no-developers.</strong> No apunta a que un dueño de negocio construya su sistema clickeando. Lo usa el equipo de NODO (o eventualmente partners autorizados) para construir verticales rápido.</li>
+    <li><strong>No es un producto que el cliente final compra.</strong> El cliente compra un vertical (NODO Odonto, NODO Distribución…). El shell es invisible.</li>
+    <li><strong>No es un experimento.</strong> Es la apuesta estructural de la empresa. Toda la economía de NODO en 2027–2030 depende de que esto funcione.</li>
+  </ul>
+</section>
+
+<section id="principios">
+  <h2 data-num="§ 4">Los 7 principios fundacionales</h2>
+
+  <div class="principle">
+    <h4>Principio 1 — Una sola plataforma, muchas configuraciones</h4>
+    <p>Cualquier diferencia entre clientes se resuelve con configuración (toggles, parámetros, módulos activables, temas). <strong>Nunca con código bifurcado.</strong> Si un cliente pide algo que no se puede resolver con configuración, o se eleva al shell para todos, o se cobra como proyecto a medida aparte, o se rechaza.</p>
+  </div>
+
+  <div class="principle">
+    <h4>Principio 2 — Densidad sobre amabilidad</h4>
+    <p>NODO Shell está pensado para profesionales que pasan 6–10 horas al día en el sistema. La densidad alta y los atajos de teclado son la regla, no la excepción. Cuando exista tensión entre "se ve bonito en una captura" y "se trabaja rápido en producción", gana producción. El público que prefiere "amabilidad mobile-first" no es nuestro público.</p>
+  </div>
+
+  <div class="principle">
+    <h4>Principio 3 — Identidad visual antes que tendencias</h4>
+    <p>La estética ribbon-MDI no se cambia por modas. Se actualiza con criterio (Fluent flat moderno) pero la metáfora es estable durante años. Coherencia de marca a 5 años > seguir el último framework de moda.</p>
+  </div>
+
+  <div class="principle">
+    <h4>Principio 4 — Apoyarse en el ecosistema, no reinventarlo</h4>
+    <p>El shell <em>viste</em> componentes maduros (TanStack Table, PDF.js, librerías de charting). No reinventa primitivas. El valor está en la composición y la identidad, no en construir un data-grid desde cero.</p>
+  </div>
+
+  <div class="principle">
+    <h4>Principio 5 — Crecimiento por demanda real</h4>
+    <p>El shell crece cuando un vertical real necesita un componente nuevo. No por especulación ("algún día alguien lo va a pedir"). Lo que vive en un solo vertical, queda en ese vertical hasta que un segundo lo necesite idéntico.</p>
+  </div>
+
+  <div class="principle">
+    <h4>Principio 6 — Documentación viva o no existe</h4>
+    <p>Cada componente del shell tiene su demo navegable y su uso documentado. Si no está documentado, no está terminado. Si en 6 meses nosotros mismos no recordamos cómo usar un componente, el shell falló.</p>
+  </div>
+
+  <div class="principle">
+    <h4>Principio 7 — Lo no-codeable es lo defendible</h4>
+    <p>La identidad, la densidad, los atajos, el lenguaje paraguayo, la integración SIFEN, la marca, la base instalada, la red de soporte humano local — eso es lo que ningún competidor con IA puede replicar. Toda decisión técnica se evalúa contra el principio: ¿esto refuerza nuestro activo no-codeable o lo diluye?</p>
+  </div>
+</section>
+
+<section id="arquitectura">
+  <h2 data-num="§ 5">Arquitectura conceptual</h2>
+  <p>NODO se organiza en tres capas:</p>
+
+<pre>
+                    ┌─────────────────────────────┐
+                    │   CLIENTE FINAL              │
+                    │   (distribuidora, dentista,  │
+                    │    taller, inmobiliaria)     │
+                    └──────────────┬──────────────┘
+                                   │
+                    ┌──────────────▼──────────────┐
+   CAPA 1           │  VERTICALES NODO              │
+   (lo que el       │  · NODO Distribución          │
+   cliente compra)  │  · NODO Odonto                │
+                    │  · NODO Taller                │
+                    │  · NODO Inmobiliaria          │
+                    │  · NODO Salud                 │
+                    │  · NODO Financiero            │
+                    └──────────────┬──────────────┘
+                                   │
+                    ┌──────────────▼──────────────┐
+   CAPA 2           │  NODO SHELL                   │
+   (la plataforma   │  Layout · Componentes ·       │
+   común invisible) │  Atajos · PWA · Theming       │
+                    └──────────────┬──────────────┘
+                                   │
+                    ┌──────────────▼──────────────┐
+   CAPA 3           │  SATÉLITES                    │
+   (apps que se     │  · Apps mobile-first          │
+   conectan vía     │  · Planillas densas tipo Excel│
+   API)             │  · Apps de campo              │
+                    └─────────────────────────────┘
+</pre>
+
+  <h4>Flujo de valor</h4>
+  <ol>
+    <li>El cliente final compra un vertical específico (ej: NODO Odonto).</li>
+    <li>Ese vertical está construido sobre NODO Shell.</li>
+    <li>Si necesita funcionalidad en otro contexto (ej: agenda mobile, planilla densa), usa un satélite que se conecta vía API.</li>
+    <li>Todo comparte autenticación, datos cuando corresponde, y marca.</li>
+  </ol>
+</section>
+
+<section id="regla-vive">
+  <h2 data-num="§ 6">Regla de qué vive dónde</h2>
+  <table>
+    <thead>
+      <tr><th>Cosa</th><th>¿Dónde vive?</th><th>Criterio</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Layout (ribbon, MDI, status bar)</td><td><strong>Shell</strong></td><td>Es la identidad.</td></tr>
+      <tr><td>Componente UI reutilizable</td><td>Shell <em>si</em> 2+ verticales lo usan idéntico</td><td>Demanda real, no especulada.</td></tr>
+      <tr><td>Componente UI específico de un rubro<br><em>(ficha clínica, OT, listado de propiedades)</em></td><td>Vertical</td><td>Único en su contexto.</td></tr>
+      <tr><td>Lógica de negocio<br><em>(cómo se calcula una factura)</em></td><td>Vertical</td><td>Cada negocio es distinto.</td></tr>
+      <tr><td>Auth, sesión, permisos</td><td><strong>Shell</strong></td><td>Horizontal a todos.</td></tr>
+      <tr><td>Integración SIFEN</td><td>Shell (vía sifen-engine)</td><td>Horizontal y regulada.</td></tr>
+      <tr><td>Integración con sistema externo del rubro</td><td>Vertical</td><td>Específica.</td></tr>
+      <tr><td>App con metáfora UI distinta<br><em>(mobile, kiosk, planilla)</em></td><td>Satélite</td><td>No encaja en ribbon-desktop.</td></tr>
+      <tr><td>Configuración por cliente</td><td>Vertical (parámetros)</td><td>Nunca código forkeado.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="versionado">
+  <h2 data-num="§ 7">Reglas de versionado</h2>
+  <ul>
+    <li><strong>Versión semántica del shell:</strong> <code>MAJOR.MINOR.PATCH</code></li>
+    <li><strong>PATCH:</strong> bug fixes que no cambian APIs. Verticales pueden actualizar sin testing extra.</li>
+    <li><strong>MINOR:</strong> nuevos componentes o features compatibles hacia atrás. Verticales actualizan en su próximo ciclo.</li>
+    <li><strong>MAJOR:</strong> breaking changes. Requiere plan de migración de cada vertical, comunicado interno, y prueba completa antes de release.</li>
+    <li><strong>Cada vertical debe estar máximo 1 MAJOR atrás del shell.</strong> Si dos verticales están en versiones distintas del shell, hay que ponerlos al día antes de avanzar con nada nuevo.</li>
+    <li><strong>Changelog del shell obligatorio.</strong> Cada cambio se anota con razón y fecha. Sin changelog, no hay merge.</li>
+  </ul>
+</section>
+
+<section id="identidad">
+  <h2 data-num="§ 8">Reglas de identidad visual</h2>
+  <ul>
+    <li><strong>Tipografía base:</strong> Segoe UI con fallback a Inter.</li>
+    <li><strong>Densidad:</strong> filas 26–28px, fuentes 11–12px en grillas, 13–14px en formularios.</li>
+    <li><strong>Paleta:</strong> azul Fluent (<code>#0f6cbd</code> como acento principal). Temas alternativos: oscuro, alto contraste.</li>
+    <li><strong>Iconografía:</strong> SVG inline, estilo Fluent UI / Lucide / Tabler. Nada de emojis en la UI.</li>
+    <li><strong>Atajos de teclado canónicos:</strong> F1 ayuda · F2 editar · F3 buscar · F4 lookup · F5 refrescar · F6 navegar paneles · Esc cerrar · Ctrl+S guardar · Ctrl+N nuevo · Ctrl+F filtrar · Alt+letra ir a tab del ribbon.</li>
+    <li><strong>Cualquier vertical que rompa esta identidad pierde la marca NODO.</strong> No se publica como vertical NODO si no respeta los cánones.</li>
+  </ul>
+</section>
+
+<section id="anti-fork">
+  <h2 data-num="§ 9">La disciplina anti-fork (la regla más importante)</h2>
+  <p>Esta es la única regla cuya violación mata la empresa entera. Por eso va sola:</p>
+  <blockquote>
+    <strong>NUNCA SE BIFURCA EL CÓDIGO POR UN CLIENTE.</strong><br><br>
+    Si un cliente pide algo que el shell o el vertical actual no resuelven:<br>
+    · Si lo necesita más de un cliente → entra al roadmap del shell o del vertical.<br>
+    · Si lo necesita uno solo → se ofrece como <strong>proyecto a medida</strong> cobrado aparte por la Fábrica de Software, integrado vía configuración o satélite.<br>
+    · Si no se puede integrar limpio → se rechaza educadamente.<br><br>
+    Nunca se acepta "te lo cambio en tu instalación".
+  </blockquote>
+  <p>Cada vez que se quiebre esta regla, NODO pierde un mes de productividad futura por ahorrarse un día de incomodidad presente.</p>
+</section>
+
+<!-- ============= PARTE II ============= -->
+<div class="part-header">
+  <div class="part-label">Parte II</div>
+  <h2 data-num="">Modelo de Negocio</h2>
+</div>
+
+<section id="canales">
+  <h2 class="no-rule" data-num="§ 10">Las tres fuentes de ingreso</h2>
+  <p>NODO factura por tres canales, cada uno con lógica económica propia:</p>
+
+  <h4>Canal A — Suscripciones a verticales</h4>
+  <p>Ingreso recurrente, escalable. El cliente paga una mensualidad por usar un vertical específico. Es el canal <strong>principal</strong> y el que define la valuación de la empresa.</p>
+
+  <h4>Canal B — Proyectos a medida vía Fábrica de Software</h4>
+  <p>Ingreso por proyecto, márgenes altos. Cuando un cliente quiere un sistema que no existe como vertical estandarizado, la Fábrica de Software lo construye sobre el shell. Cobra proyecto + suscripción de mantenimiento.</p>
+
+  <h4>Canal C — Servicios</h4>
+  <p>Ingreso recurrente o por uso, alto margen. Asesoría, capacitación, soporte premium, implementación asistida, consultoría con IA, configuración por rubro.</p>
+</section>
+
+<section id="pricing">
+  <h2 data-num="§ 11">Pricing tentativo</h2>
+  <p><em>Atención: los precios son hipótesis iniciales. Validar con 5–10 clientes reales antes de fijar.</em></p>
+
+  <h3>Suscripción a vertical (Canal A)</h3>
+  <table>
+    <thead>
+      <tr><th>Plan</th><th>Qué incluye</th><th>Pricing tentativo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Básico</strong></td><td>Vertical activado, 1 sucursal, 2 usuarios, módulos esenciales, soporte vía agente IA + tutoriales</td><td>250.000 Gs/mes</td></tr>
+      <tr><td><strong>Profesional</strong></td><td>+ Multi-sucursal (hasta 3), 5 usuarios, módulos premium del vertical, soporte humano de 1er nivel</td><td>600.000 Gs/mes</td></tr>
+      <tr><td><strong>Empresa</strong></td><td>Sucursales ilimitadas, usuarios ilimitados, todos los módulos, soporte prioritario, asesoría incluida 4hs/mes</td><td>1.500.000 Gs/mes</td></tr>
+      <tr><td>Add-ons</td><td>Sucursal extra, satélite conectado, módulos especiales</td><td>Por unidad</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Proyecto a medida (Canal B)</h3>
+  <table>
+    <thead>
+      <tr><th>Tipo</th><th>Pricing</th><th>Notas</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Vertical chico (ej: gestor de gimnasio)</td><td>25–60M Gs proyecto + suscripción</td><td>Forma de pago 50/25/25</td></tr>
+      <tr><td>Vertical mediano (ERP custom)</td><td>60–150M Gs proyecto + suscripción</td><td></td></tr>
+      <tr><td>Vertical grande</td><td>Cotización a medida</td><td>Solo si justifica volverlo producto</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Servicios (Canal C)</h3>
+  <table>
+    <thead>
+      <tr><th>Servicio</th><th>Pricing tentativo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Onboarding asistido</td><td>1.500.000 Gs único</td></tr>
+      <tr><td>Asesoría mensual (4hs)</td><td>400.000 Gs/mes</td></tr>
+      <tr><td>Capacitación on-site</td><td>800.000 Gs/jornada</td></tr>
+      <tr><td>Reportes a medida</td><td>300.000 Gs por reporte</td></tr>
+      <tr><td>Soporte premium 24/7</td><td>800.000 Gs/mes</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="funnel">
+  <h2 data-num="§ 12">Funnel del cliente (ideal en 2 años)</h2>
+  <ol>
+    <li><strong>Awareness:</strong> Landing pública del vertical → SEO + Marketplace + redes</li>
+    <li><strong>Interés:</strong> Demo navegable pública (mockups en Cloudflare Pages)</li>
+    <li><strong>Calificación:</strong> Ventas.Bot (agente IA) toma BANT, agenda demo o cierra solo</li>
+    <li><strong>Cierre:</strong> Vos o un comercial humano (5 minutos, no 5 horas)</li>
+    <li><strong>Onboarding:</strong> Self-service guiado por wizard del vertical + agente IA</li>
+    <li><strong>Soporte 1er nivel:</strong> Agente IA + tutoriales + base de conocimiento</li>
+    <li><strong>Soporte 2do nivel:</strong> Técnico humano (vos, equipo o partner local)</li>
+    <li><strong>Crisis / auditoría / criterio:</strong> Vos directamente</li>
+  </ol>
+
+  <div class="callout">
+    <p><strong>Métrica clave:</strong> horas humanas por cliente activo. Tiene que tender a 0 en clientes Básicos y a 4hs/mes en clientes Empresa. Si un cliente Básico te consume más de 1hs/mes humanas, hay un problema en la automatización o en el cliente.</p>
+  </div>
+</section>
+
+<section id="roadmap">
+  <h2 data-num="§ 13">Roadmap por fases</h2>
+
+  <h3>Fase 1 — Año 1 (2026): Validar el shell con un vertical real</h3>
+  <ul>
+    <li>Terminar NODO Shell v1.0 (componentes core: grilla, formularios, agenda, side panel, theming, atajos).</li>
+    <li>Construir el primer vertical completo sobre el shell. <strong>Recomendación: NODO Distribución</strong> (porque hereda lo más posible de ERP Lite + es un rubro identificado).</li>
+    <li>Conseguir 5 clientes pagando del primer vertical. Aprender en producción.</li>
+    <li>Documentar el shell. Publicar demo navegable pública.</li>
+    <li><strong>KPI Fase 1:</strong> 1 vertical en producción con 5 clientes pagando, churn 0, NPS &gt; 8.</li>
+  </ul>
+
+  <h3>Fase 2 — Año 2 (2027): Multiplicar verticales</h3>
+  <ul>
+    <li>Construir 2–3 verticales más sobre el shell. Recomendación: <strong>NODO Taller</strong> (tenés casos avanzados Jordan + Taller Autos), <strong>NODO Odonto</strong> o <strong>NODO Inmobiliaria</strong> según validación.</li>
+    <li>Lanzar marketing del posicionamiento "hecho para quien trabaja, no para quien mira el celular".</li>
+    <li>Cada vertical con su landing, su funnel, su pricing.</li>
+    <li><strong>KPI Fase 2:</strong> 3 verticales en producción, 30+ clientes totales, MRR 25M Gs/mes, churn &lt; 5%.</li>
+  </ul>
+
+  <h3>Fase 3 — Año 3 (2028): Decisión de plataforma pública</h3>
+  <ul>
+    <li>Evaluar abrir NODO Shell como plataforma licenciable a otros desarrolladores paraguayos (modelo Salesforce / Mendix).</li>
+    <li>Documentación pública del shell, programa de partners certificados, marketplace de plantillas de verticales.</li>
+    <li>Si no se abre, profundizar verticales existentes y agregar 2 más.</li>
+    <li><strong>KPI Fase 3:</strong> 5+ verticales, 100+ clientes, MRR 80M Gs/mes, decisión tomada sobre apertura.</li>
+  </ul>
+</section>
+
+<section id="kpis">
+  <h2 data-num="§ 14">KPIs a medir desde el día 1</h2>
+  <table>
+    <thead>
+      <tr><th>KPI</th><th>Meta Año 1</th><th>Meta Año 2</th><th>Meta Año 3</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Verticales en producción</td><td>1</td><td>3</td><td>5+</td></tr>
+      <tr><td>Clientes activos totales</td><td>5</td><td>30</td><td>100+</td></tr>
+      <tr><td>MRR (Monthly Recurring Revenue)</td><td>5M Gs</td><td>25M Gs</td><td>80M Gs</td></tr>
+      <tr><td>Churn mensual</td><td>&lt; 8%</td><td>&lt; 5%</td><td>&lt; 3%</td></tr>
+      <tr><td>Horas humanas / cliente Básico / mes</td><td>&lt; 2</td><td>&lt; 1</td><td>&lt; 0.5</td></tr>
+      <tr><td>Componentes maduros del shell</td><td>12</td><td>25</td><td>40+</td></tr>
+      <tr><td>Tiempo para arrancar nuevo vertical</td><td>3 meses</td><td>6 semanas</td><td>3 semanas</td></tr>
+      <tr><td>NPS de clientes</td><td>&gt; 7</td><td>&gt; 8</td><td>&gt; 9</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============= PARTE III ============= -->
+<div class="part-header">
+  <div class="part-label">Parte III</div>
+  <h2 data-num="">Decisiones pendientes</h2>
+</div>
+
+<section id="decisiones">
+  <p>Estas cuatro decisiones tienen que cerrarse entre Emiliano y Carlos en los próximos <strong>60 días</strong>. Cada una cambia estructuralmente el modelo:</p>
+
+  <div class="decision-card">
+    <h3>Decisión 1 — ¿Shell privado interno o plataforma pública licenciable?</h3>
+    <ul>
+      <li><strong>Privado:</strong> solo NODO usa el shell. Más control, menos overhead de documentación, sin obligación de soporte a terceros.</li>
+      <li><strong>Público:</strong> otros estudios paraguayos pueden construir verticales sobre NODO Shell pagando licencia. Negocio 10x más grande pero requiere gobernanza.</li>
+      <li><strong>Híbrido recomendado:</strong> privado los primeros 2 años, diseñado para abrirse después.</li>
+    </ul>
+    <p><strong>Decisión a tomar:</strong> ¿asumimos el costo extra hoy de "diseñar pensando en abrir mañana"? Sí/No.</p>
+  </div>
+
+  <div class="decision-card">
+    <h3>Decisión 2 — Marca por vertical: paraguas único o sub-marcas</h3>
+    <ul>
+      <li><strong>Paraguas único:</strong> "NODO" como marca, los verticales son línea de producto (NODO Distribución, NODO Odonto). Coherencia total.</li>
+      <li><strong>Sub-marcas:</strong> cada vertical con su propia marca (DentaNodo, TallerNodo). Más SEO, menos coherencia.</li>
+      <li><strong>Recomendado:</strong> paraguas único con prefijo NODO + descriptor del vertical. Sub-marca solo si un vertical alcanza tamaño que justifique escisión.</li>
+    </ul>
+  </div>
+
+  <div class="decision-card">
+    <h3>Decisión 3 — Política anti-customización: ¿cuán estricta?</h3>
+    <ul>
+      <li><strong>Estricta:</strong> ningún cambio de código por cliente, jamás. Todo se resuelve con configuración o se rechaza.</li>
+      <li><strong>Flexible:</strong> se acepta customización, pero solo vía proyecto a medida cobrado y siempre integrado limpio (configuración o satélite).</li>
+      <li><strong>Recomendado:</strong> estricta para los verticales estandarizados. Flexible para proyectos a medida totalmente nuevos vía Fábrica de Software.</li>
+    </ul>
+  </div>
+
+  <div class="decision-card">
+    <h3>Decisión 4 — Modelo monetario primario: ¿suscripción pura o híbrido con proyecto?</h3>
+    <ul>
+      <li><strong>Suscripción pura:</strong> apostamos todo a recurrente. Necesitamos volumen y paciencia.</li>
+      <li><strong>Híbrido:</strong> suscripción + proyectos a medida cuando aparezcan. Más cash inmediato, menos elegante en valuación.</li>
+      <li><strong>Recomendado:</strong> híbrido mientras dura la transición (años 1–3), suscripción pura como dirección estratégica.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============= PARTE IV ============= -->
+<div class="part-header">
+  <div class="part-label">Parte IV</div>
+  <h2 data-num="">Las 3 reglas de oro</h2>
+</div>
+
+<section id="reglas-oro">
+  <p>Estas tres reglas las firmamos vos y Carlos. Cada vez que aparezca una decisión difícil, se vuelve acá. Son <strong>no negociables</strong>:</p>
+
+  <div class="rule-card">
+    <div class="rule-num">Regla 1</div>
+    <h3>No forkear nunca</h3>
+    <p>Una sola plataforma, muchas configuraciones. Toda customización específica de un cliente vive como proyecto a medida cobrado aparte, integrado vía configuración, satélite o módulo. Bajo ninguna circunstancia se mantiene un fork del shell o de un vertical para un cliente.</p>
+  </div>
+
+  <div class="rule-card">
+    <div class="rule-num">Regla 2</div>
+    <h3>El shell no crece por especulación</h3>
+    <p>Un componente entra al shell solo cuando dos verticales lo necesitan idénticamente. Hasta entonces, vive en el vertical donde apareció. Esto evita el over-engineering y mantiene el shell ágil.</p>
+  </div>
+
+  <div class="rule-card">
+    <div class="rule-num">Regla 3</div>
+    <h3>La identidad visual es sagrada</h3>
+    <p>El ribbon-MDI, la densidad, los atajos, la paleta, la iconografía, la tipografía no se cambian por moda ni por cliente. Solo se actualizan en versiones MAJOR del shell, con plan de migración, y siempre preservando la metáfora central (sistema empresarial denso, profesional, productivo).</p>
+  </div>
+</section>
+
+<!-- ============= ANEXOS ============= -->
+<hr class="section-break">
+
+<section id="anexo-a">
+  <h2 class="no-rule" data-num="A">Anexo A — Catálogo inicial de verticales</h2>
+  <table>
+    <thead>
+      <tr><th>Vertical</th><th>Estado</th><th>Mercado objetivo</th><th>Prioridad</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>NODO Distribución</strong></td><td>A construir Año 1</td><td>Distribuidoras, mayoristas, ferreterías</td><td>Alta</td></tr>
+      <tr><td><strong>NODO Taller</strong></td><td>Casos Jordan + Taller Autos en curso</td><td>Talleres mecánicos, electrónica, electrodomésticos</td><td>Alta</td></tr>
+      <tr><td><strong>NODO Odonto</strong></td><td>Año 2</td><td>Consultorios odontológicos</td><td>Media</td></tr>
+      <tr><td><strong>NODO Inmobiliaria</strong></td><td>Año 2</td><td>Inmobiliarias, administradoras</td><td>Media</td></tr>
+      <tr><td><strong>NODO Salud</strong></td><td>Año 3</td><td>Consultorios médicos, clínicas chicas</td><td>Baja</td></tr>
+      <tr><td><strong>NODO Financiero</strong></td><td>Año 3</td><td>Cooperativas, financieras chicas</td><td>Baja</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <p><strong>Nota importante.</strong> La línea <strong>POS Gastronomía</strong> de NODO (lomiterías, pizzerías, gastronomía pequeña, despensas) <strong>NO es un vertical de NODO Shell</strong>. Es un producto independiente con su propio carril (mi-pos / NODO POS legacy + agentes NodoConsultor + Ventas.Bot + skills marketing). Tienen marcas, marketing, pricing y posicionamiento distintos. NODO Shell apunta a un público profesional/empresarial; POS Gastronomía apunta a comercio pequeño. Compartirán infraestructura técnica (sifen-engine, base de datos, agentes de IA) pero son productos comercialmente separados.</p>
+  </div>
+</section>
+
+<section id="anexo-b">
+  <h2 data-num="B">Anexo B — Plantilla de evaluación de oportunidad</h2>
+  <p>Cuando aparezca un cliente con una necesidad nueva, evaluar:</p>
+  <ol>
+    <li>¿Es un mercado de 50+ negocios paraguayos con la misma necesidad? <strong>Sí</strong> → puede ser vertical. <strong>No</strong> → proyecto a medida vía Fábrica.</li>
+    <li>¿Hay 3+ clientes interesados ya identificados? <strong>Sí</strong> → vertical. <strong>No</strong> → proyecto a medida que después se evalúa volver vertical.</li>
+    <li>¿La lógica de negocio es replicable o cada cliente es único? <strong>Replicable</strong> → vertical. <strong>Único</strong> → proyecto a medida.</li>
+    <li>¿Existe regulación local específica (SIFEN, normas del rubro)? <strong>Sí</strong> → vertical (porque la regulación es activo no-codeable nuestro). <strong>No</strong> → proyecto a medida.</li>
+    <li>¿El cliente paga la inversión inicial o esperamos vender después? <strong>Paga</strong> → proyecto a medida. <strong>Esperamos</strong> → vertical, pero solo si las 4 anteriores también dan vertical.</li>
+  </ol>
+  <div class="callout">
+    <p><strong>Regla:</strong> si 4 de 5 son "vertical", se construye como vertical. Si 3 o menos, se hace como proyecto a medida y se reevalúa después.</p>
+  </div>
+</section>
+
+<section id="anexo-c">
+  <h2 data-num="C">Anexo C — Glosario</h2>
+  <ul>
+    <li><strong>Shell:</strong> la plataforma común. NODO Shell.</li>
+    <li><strong>Shell aplicativo:</strong> carcasa común sobre la cual se construyen aplicaciones específicas. Provee infraestructura compartida (layout, componentes, atajos, identidad). No resuelve negocio por sí solo.</li>
+    <li><strong>Vertical:</strong> un sistema construido sobre el shell para un rubro o uso específico. Lo que el cliente compra.</li>
+    <li><strong>Satélite:</strong> una app PWA con metáfora UI distinta (mobile, kiosk, planilla) que se conecta al shell vía API.</li>
+    <li><strong>Cohorte 0/1/2:</strong> generaciones de clientes según fase de madurez del shell.</li>
+    <li><strong>Forkear:</strong> mantener una versión modificada del código para un cliente específico. <strong>Prohibido.</strong></li>
+    <li><strong>No-codeable:</strong> activos de la empresa que ningún competidor con IA puede replicar (marca, regulación, datos, presencia física, identidad visual madura, base instalada).</li>
+    <li><strong>POS Gastronomía:</strong> línea de producto separada de NODO orientada a lomiterías, pizzerías, despensas. <strong>No es parte de NODO Shell</strong> — convive como producto hermano con infraestructura técnica compartida pero comercialización independiente.</li>
+    <li><strong>Fábrica de Software:</strong> división de NODO que construye proyectos a medida sobre el shell, como complemento al modelo de suscripción.</li>
+  </ul>
+</section>
+
+<!-- ============= FOOTER ============= -->
+<footer class="signature">
+  <p style="margin: 0; font-style: italic; color: var(--ink-soft); font-size: 15px;">
+    Este manual es el contrato interno de NODO consigo misma.<br>
+    Cuando aparezca una tentación de cambiar el rumbo, volver acá.<br>
+    Si una decisión nueva contradice este documento, primero se modifica el documento (con buenas razones), después se ejecuta. <strong>Nunca al revés.</strong>
+  </p>
+
+  <div class="signature-block">
+    <div class="signature-line">
+      <strong>Emiliano Vitale</strong>
+      Dueño de NODO
+    </div>
+    <div class="signature-line">
+      <strong>Carlos Cardozo Pintos</strong>
+      Socio de NODO
+    </div>
+  </div>
+
+  <p style="margin: 30px 0 0; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 12px; color: var(--ink-mute); letter-spacing: 0.05em;">
+    Versión 1.0 — Abril 2026 · Próxima revisión obligatoria: Octubre 2026
+  </p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -50,32 +50,57 @@ F5/F11/F12 NO se interceptan (browser reload/fullscreen/devtools).
 ### 3. Componentes reusables (`styles/components.css`)
 Patrones listos para cualquier ERP/POS/admin: KPI cards, dashboard panels, formularios densos, items-table editable con aprobación por checkbox, timeline horizontal de estados, summary box, side panel deslizante con backdrop, inner tabs, notes informativas, cashbox layout, config layout sidebar+main, receipt preview (ticket + A4), estados extendidos para workflows (pendiente/proceso/terminada/facturada/cobrada/anulada/abierta/cerrada/enviado/aprob-parc/...).
 
-### 4. Componente Agenda (`window.NodoComponents.Agenda`)
-Calendario/agenda estilo Google Calendar listo para usar:
-- **Vista Mes** (grilla 7×N con eventos como chips) y **Vista Agenda** (lista cronológica agrupada por día)
-- Eventos con título, fecha, hora opcional (o "todo el día"), nota, color (6 colores) y estado (pendiente/proceso/hecho/cancelado)
-- **Crear/editar/eliminar** vía side panel del shell (reutiliza el patrón existente)
-- **Atajos completos:** `↑↓←→` navegan días, `Enter` abre, `N` nuevo, `T` hoy, `M`/`A` cambia vista, `PgUp`/`PgDn` mes anterior/siguiente
-- **Tema-aware** (Office Blue / Bloomberg Pro / Slate)
-- **Storage configurable:** por defecto `localStorage`, cualquier cliente puede inyectar `loader`/`saver` async para conectar con su backend
+### 4. Biblioteca de componentes (`window.NodoComponents`)
+
+Pequeña librería de componentes vanilla, tema-aware, listos para usar en cualquier sistema. **Probalos en vivo abriendo `F6` (módulo Biblioteca) en el ribbon → OPERATIVO.**
+
+| Paquete | Componentes / Métodos |
+|---|---|
+| **`NodoComponents.Inputs`** | `text` · `money` (Gs. PY con miles) · `ruc` (con dígito verificador SET) · `ci` · `phone` (0981-xxx-xxx) · `email` · `date` (popup calendario) · `dateRange` (con presets: hoy/semana/mes/año) · `select` (combobox searchable) · `switch` (toggle) · `textarea` (con contador). API uniforme: `getValue/setValue/validate/focus/destroy`. Helpers: `formatMoney`, `parseMoney`, `validateRUC`, `formatDate`, `parseDate`, `ymd`. |
+| **`NodoComponents.Chart`** | `bar` (vertical u horizontal) · `line` (con `area`) · `pie` (con `donut`). SVG vanilla, **sin librerías externas**, leyenda y tooltips, paleta de 10 colores con cycling. Resize automático. |
+| **`NodoComponents.Modal`** | `open({title, body, footer, kind, size})` · `alert({title, message, kind})` (Promise) · `confirm({title, message, kind})` (Promise<boolean>). Tipos: success / warning / danger. Tamaños: sm / md / lg. |
+| **`NodoComponents.Toast`** | `success(msg)` · `warning(msg)` · `danger(msg)` · `info(msg)`. Stack automático arriba a la derecha, auto-dismiss configurable. |
+| **`NodoComponents.DocumentViewer`** | `open({url, type, title})`. Tipos: `pdf` (iframe nativo) · `image` (con zoom 25%–400%) · `iframe` genérico. Botones de descargar e imprimir. |
+| **`NodoComponents.Agenda`** | Calendario estilo Google Calendar. Vista Mes (grilla con chips) + Vista Agenda (lista cronológica). Eventos con título/fecha/hora/nota/color (6)/estado (4). Side panel para editar. Atajos: ↑↓←→ Enter N T M/A PgUp/PgDn. Storage configurable (localStorage por default, override con `loader`/`saver` async). |
+
+#### Ejemplos rápidos
 
 ```js
-// Cualquier proyecto cliente registra su agenda así:
-window.MODULOS.miAgenda = function (container) {
-  window.NodoComponents.Agenda.mount(container, {
-    storageKey: "miApp.agenda",
-    loader: async () => myBackend.fetchEvents(),
-    saver:  async (events) => myBackend.saveEvents(events),
-    onChange: (events) => console.log("hay", events.length, "eventos"),
-    initialView: "month",
-    initialEvents: [
-      { id: 1, fecha: "2026-04-25", horaInicio: "09:00", horaFin: "10:00",
-        titulo: "Reunión", color: "info", estado: "pendiente" },
-      { id: 2, fecha: "2026-04-25", todoElDia: true,
-        titulo: "Vencimiento IVA", color: "warning" }
-    ]
-  });
-};
+// Input money con validación
+const monto = NodoComponents.Inputs.money({
+  container: document.querySelector("#here"),
+  label: "Monto", required: true, value: 1500000
+});
+monto.getValue(); // 1500000
+NodoComponents.Inputs.formatMoney(1500000); // "Gs. 1.500.000"
+
+// Gráfico de barras
+NodoComponents.Chart.bar({
+  container: el, title: "Ventas del mes",
+  data: [{ label: "Efectivo", value: 4500000 }, { label: "Transf.", value: 3200000 }],
+  valueFormatter: NodoComponents.Inputs.formatMoney
+});
+
+// Modal de confirmación
+const ok = await NodoComponents.Modal.confirm({
+  title: "¿Anular factura?",
+  message: "Se emitirá una nota de crédito.",
+  kind: "danger", confirmLabel: "Anular"
+});
+
+// Toast
+NodoComponents.Toast.success("Factura emitida correctamente");
+
+// Visor de PDF
+NodoComponents.DocumentViewer.open({
+  url: "/api/factura/1234.pdf", type: "pdf", title: "FACT-001-001-0001234"
+});
+
+// Agenda con backend custom
+NodoComponents.Agenda.mount(container, {
+  loader: async () => fetch("/api/eventos").then(r => r.json()),
+  saver:  async (events) => fetch("/api/eventos", { method: "POST", body: JSON.stringify(events) })
+});
 ```
 
 ### 4. PWA + Cloudflare Pages
@@ -121,16 +146,22 @@ nodo-shell/
     │   ├── grid.css             grilla densa tipo XtraGrid (reusable)
     │   ├── components.css       KPIs, forms, items-table, side panel,
     │   │                        timeline, summary, notes, etc (reusable)
-    │   ├── components-agenda.css   componente NodoAgenda (vista mes + lista)
-    │   ├── themes.css           sistema de temas (Office Blue/Bloomberg/Slate)
-    │   └── keyboard.css         focus visible, badges F#, overlay F1
+    │   ├── components-inputs.css   inputs (text, money, ruc, date, select, switch...)
+    │   ├── components-chart.css    gráficos SVG vanilla
+    │   ├── components-overlay.css  modal, toast, document viewer
+    │   ├── components-agenda.css   calendario / agenda (vista mes + lista)
+    │   ├── themes.css              sistema de temas (Office Blue/Bloomberg/Slate)
+    │   └── keyboard.css            focus visible, badges F#, overlay F1
     ├── js/
-    │   ├── app.js               shell controller, atajos, registro SW
-    │   ├── theme.js             theme switcher con dropdown en QAT
-    │   ├── keyboard-nav.js      F-keys + flechas grilla + Ctrl combos
-    │   ├── components-agenda.js NodoComponents.Agenda (calendario reusable)
-    │   ├── mock-data.js         datos PY de ejemplo
-    │   └── modulos.js           registry de módulos (clientes, productos, agenda...)
+    │   ├── app.js                  shell controller, atajos, registro SW
+    │   ├── theme.js                theme switcher con dropdown en QAT
+    │   ├── keyboard-nav.js         F-keys + flechas grilla + Ctrl combos
+    │   ├── components-inputs.js    NodoComponents.Inputs (paquete completo)
+    │   ├── components-chart.js     NodoComponents.Chart (bar / line / pie)
+    │   ├── components-overlay.js   NodoComponents.Modal / Toast / DocumentViewer
+    │   ├── components-agenda.js    NodoComponents.Agenda
+    │   ├── mock-data.js            datos PY de ejemplo
+    │   └── modulos.js              registry de módulos (clientes, agenda, biblioteca...)
     ├── assets/
     │   └── icons/icon.svg       icono SVG NODO (favicon + PWA + maskable)
     └── modulos/                 mockups por módulo (a demanda)

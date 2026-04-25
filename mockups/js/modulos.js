@@ -309,3 +309,259 @@ window.MODULOS.agenda = function (container) {
     initialView: "month"
   });
 };
+
+
+/* ============================================================
+   MÓDULO: Biblioteca de componentes (showcase / demo)
+   ============================================================
+   Muestra todos los NodoComponents en acción para que cualquier
+   desarrollador o agente vea cómo usarlos.
+   ============================================================ */
+window.MODULOS.biblioteca = function (container) {
+  const NC = window.NodoComponents;
+  const I = NC.Inputs;
+
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;height:100%;background:var(--bg-app);overflow:auto;">
+      <div style="background:linear-gradient(180deg,#eef2f7 0%, #dce3ec 100%);border-bottom:1px solid var(--border-strong);padding:8px 14px;">
+        <h2 style="margin:0;color:var(--ofc-blue-900);font-size:16px;">📚 Biblioteca de componentes — NODO Shell</h2>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">
+          Todos los <code>window.NodoComponents</code> en acción. Click en cada botón para probar. Ver código en
+          <code>mockups/js/components-*.js</code>.
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;">
+
+        <!-- ===== INPUTS ===== -->
+        <div class="form__section">
+          <div class="form__section-title">📝 Inputs.text · email · phone</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:8px;" data-demo="inputs-basic"></div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">💰 Inputs.money · ruc · ci (PY)</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:8px;" data-demo="inputs-py"></div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">📅 Inputs.date · dateRange (con presets)</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:8px;" data-demo="inputs-date"></div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">⬇️ Inputs.select · switch · textarea</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:8px;" data-demo="inputs-select"></div>
+        </div>
+
+        <!-- ===== CHARTS ===== -->
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">📊 Chart.bar · line · pie/donut</div>
+          <div style="padding:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" data-demo="charts">
+            <div style="height:280px;border:1px solid var(--border);background:#fff;" data-chart="bar"></div>
+            <div style="height:280px;border:1px solid var(--border);background:#fff;" data-chart="line"></div>
+            <div style="height:280px;border:1px solid var(--border);background:#fff;" data-chart="pie"></div>
+          </div>
+        </div>
+
+        <!-- ===== OVERLAYS ===== -->
+        <div class="form__section">
+          <div class="form__section-title">💬 Modal · Confirm · Alert</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;" data-demo="modals">
+            <button class="btn" data-act="modal-info">Modal informativo</button>
+            <button class="btn" data-act="modal-form">Modal con formulario</button>
+            <button class="btn" data-act="alert-success">Alert success</button>
+            <button class="btn" data-act="confirm-danger">Confirm destructivo</button>
+          </div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__section-title">🔔 Toast (success / warning / danger / info)</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;" data-demo="toasts">
+            <button class="btn tb-btn--success" data-act="toast-success">✓ Toast Success</button>
+            <button class="btn tb-btn--warning" data-act="toast-warning">⚠ Toast Warning</button>
+            <button class="btn tb-btn--danger"  data-act="toast-danger">✕ Toast Danger</button>
+            <button class="btn"                 data-act="toast-info">ℹ Toast Info</button>
+          </div>
+        </div>
+
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">📄 DocumentViewer (PDF / imagen)</div>
+          <div style="padding:10px;display:flex;gap:8px;align-items:flex-start;" data-demo="docs">
+            <button class="btn" data-act="doc-pdf">📄 Ver PDF de ejemplo</button>
+            <button class="btn" data-act="doc-img">🖼 Ver imagen de ejemplo</button>
+            <span style="color:var(--text-muted);font-size:11px;align-self:center;">
+              Soporta zoom, descarga, impresión.
+            </span>
+          </div>
+        </div>
+
+        <!-- ===== AGENDA reference ===== -->
+        <div class="form__section" style="grid-column:span 2;">
+          <div class="form__section-title">🗓 Agenda</div>
+          <div style="padding:10px;color:var(--text-muted);font-size:12px;">
+            Componente completo con vista Mes + Agenda lista. Probalo en <kbd>F4</kbd>
+            o desde el ribbon → OPERATIVO → Agenda. Documentación en
+            <code>mockups/js/components-agenda.js</code>.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  /* ---------- Inputs básicos ---------- */
+  const c1 = container.querySelector('[data-demo="inputs-basic"]');
+  I.text({  container: c1, label: "Nombre completo", required: true, placeholder: "Ej: Carlos Pérez" });
+  I.email({ container: c1, label: "Email",           placeholder: "alguien@ejemplo.com" });
+  I.phone({ container: c1, label: "Teléfono",        placeholder: "0981-123-456", hint: "Formato 0981-xxx-xxx" });
+
+  /* ---------- Inputs paraguayos ---------- */
+  const c2 = container.querySelector('[data-demo="inputs-py"]');
+  I.money({ container: c2, label: "Monto (Gs.)", value: 1500000, prefix: "Gs.", required: true });
+  I.ruc({   container: c2, label: "RUC", placeholder: "80012345-6", hint: "Validación con dígito verificador SET" });
+  I.ci({    container: c2, label: "Cédula",  placeholder: "3.456.789" });
+
+  /* ---------- Date / DateRange ---------- */
+  const c3 = container.querySelector('[data-demo="inputs-date"]');
+  I.date({ container: c3, label: "Fecha de operación", value: new Date() });
+  I.dateRange({
+    container: c3,
+    label: "Rango de fechas (reportes)",
+    presets: [
+      { id: "today",     label: "Hoy" },
+      { id: "yesterday", label: "Ayer" },
+      { id: "week",      label: "Últ. 7 días" },
+      { id: "30d",       label: "Últ. 30 días" },
+      { id: "month",     label: "Mes actual" },
+      { id: "year",      label: "Año actual" }
+    ]
+  });
+
+  /* ---------- Select / Switch / Textarea ---------- */
+  const c4 = container.querySelector('[data-demo="inputs-select"]');
+  I.select({
+    container: c4,
+    label: "Cliente (searchable)",
+    placeholder: "Buscá por nombre...",
+    items: [
+      { value: 1, label: "Lomitería Tres Hermanos S.A. (Asunción)" },
+      { value: 2, label: "Patricia Rojas de Mendoza" },
+      { value: 3, label: "Pizzería Don Vito SRL" },
+      { value: 4, label: "Carlos Benítez Ojeda" },
+      { value: 5, label: "Supermercado La Familia SRL" },
+      { value: 6, label: "Ferretería El Constructor S.A." },
+      { value: 7, label: "Clínica Santa Lucia SRL" }
+    ]
+  });
+  I.switch({   container: c4, label: "Cliente VIP",       value: true });
+  I.switch({   container: c4, label: "Notificar por mail" });
+  I.textarea({ container: c4, label: "Observaciones", rows: 3, maxlength: 200, placeholder: "Notas internas..." });
+
+  /* ---------- Charts ---------- */
+  NC.Chart.bar({
+    container: container.querySelector('[data-chart="bar"]'),
+    title: "Ventas por método de pago (mes)",
+    data: [
+      { label: "Efectivo", value: 4520000 },
+      { label: "Transferencia", value: 3180000 },
+      { label: "POS",      value: 1850000 },
+      { label: "A cuenta", value: 920000 }
+    ],
+    valueFormatter: I.formatMoney
+  });
+  NC.Chart.line({
+    container: container.querySelector('[data-chart="line"]'),
+    title: "Ventas diarias últimos 7 días",
+    xLabels: ["Vie","Sáb","Dom","Lun","Mar","Mié","Jue"],
+    series: [
+      { name: "Ventas", data: [
+        { x: 0, y: 850000 }, { x: 1, y: 1240000 }, { x: 2, y: 380000 },
+        { x: 3, y: 1450000 }, { x: 4, y: 1820000 }, { x: 5, y: 2100000 }, { x: 6, y: 1680000 }
+      ]}
+    ],
+    area: true,
+    valueFormatter: I.formatMoney
+  });
+  NC.Chart.pie({
+    container: container.querySelector('[data-chart="pie"]'),
+    title: "OT por estado",
+    donut: true,
+    data: [
+      { label: "Pendientes", value: 8 },
+      { label: "En proceso", value: 12 },
+      { label: "Terminadas", value: 23 },
+      { label: "Facturadas", value: 18 },
+      { label: "Entregadas", value: 47 }
+    ]
+  });
+
+  /* ---------- Modals ---------- */
+  const cm = container.querySelector('[data-demo="modals"]');
+  cm.querySelector('[data-act="modal-info"]').onclick = () => {
+    NC.Modal.open({
+      title: "Modal genérico",
+      body: `<p>Este es un modal de uso libre. Podés meter cualquier HTML acá adentro: formularios, tablas, gráficos, lo que necesites.</p>
+             <p style="color:var(--text-muted);font-size:11px;">Cerrá con <kbd>Esc</kbd>, click afuera, o el botón ✕.</p>`,
+      footer: `<button class="btn btn--primary" onclick="NodoComponents.Modal.close()">Entendido</button>`
+    });
+  };
+  cm.querySelector('[data-act="modal-form"]').onclick = () => {
+    const body = document.createElement("div");
+    body.innerHTML = `<div data-fld></div>`;
+    const m = NC.Modal.open({
+      title: "Nuevo cliente rápido",
+      body,
+      footer: `<button class="btn" data-act="cancel">Cancelar</button>
+               <button class="btn btn--primary" data-act="save">Guardar</button>`,
+      size: "lg"
+    });
+    const fld = body.querySelector('[data-fld]');
+    const nombre = I.text({ container: fld, label: "Nombre", required: true });
+    const ruc    = I.ruc({  container: fld, label: "RUC" });
+    const email  = I.email({container: fld, label: "Email" });
+    m.footer.querySelector('[data-act="cancel"]').onclick = () => m.close();
+    m.footer.querySelector('[data-act="save"]').onclick = () => {
+      if (!nombre.validate() || !email.validate() || !ruc.validate()) return;
+      m.close();
+      NC.Toast.success("Cliente creado: " + nombre.getValue());
+    };
+  };
+  cm.querySelector('[data-act="alert-success"]').onclick = async () => {
+    await NC.Modal.alert({ title: "Operación exitosa", message: "Los cambios fueron guardados correctamente.", kind: "success" });
+  };
+  cm.querySelector('[data-act="confirm-danger"]').onclick = async () => {
+    const ok = await NC.Modal.confirm({
+      title: "¿Eliminar registro?",
+      message: "Esta acción no se puede deshacer. ¿Estás seguro?",
+      kind: "danger",
+      confirmLabel: "Sí, eliminar"
+    });
+    if (ok) NC.Toast.warning("Registro eliminado (mockup)");
+    else    NC.Toast.info("Eliminación cancelada");
+  };
+
+  /* ---------- Toasts ---------- */
+  const ct = container.querySelector('[data-demo="toasts"]');
+  ct.querySelector('[data-act="toast-success"]').onclick = () => NC.Toast.success("Factura emitida correctamente · CDC generado");
+  ct.querySelector('[data-act="toast-warning"]').onclick = () => NC.Toast.warning("Tu sesión expira en 5 minutos");
+  ct.querySelector('[data-act="toast-danger"]').onclick  = () => NC.Toast.danger("Error al conectar con SIFEN. Reintentá en unos segundos.", { title: "Conexión fallida" });
+  ct.querySelector('[data-act="toast-info"]').onclick    = () => NC.Toast.info("Hay 3 actualizaciones disponibles del sistema");
+
+  /* ---------- DocumentViewer ---------- */
+  const cd = container.querySelector('[data-demo="docs"]');
+  cd.querySelector('[data-act="doc-pdf"]').onclick = () => {
+    NC.DocumentViewer.open({
+      url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      type: "pdf",
+      title: "Comprobante de ejemplo (PDF)"
+    });
+  };
+  cd.querySelector('[data-act="doc-img"]').onclick = () => {
+    NC.DocumentViewer.open({
+      url: "assets/icons/icon.svg",
+      type: "image",
+      title: "Imagen de ejemplo"
+    });
+  };
+};
